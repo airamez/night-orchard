@@ -28,7 +28,7 @@ async function mutate(db: Db, code: string, fn: (s: GameState) => GameState) {
     const { data: upd } = await db.from("rooms")
       .update({ state: next as never, updated_at: new Date().toISOString() })
       .eq("code", code).eq("updated_at", row.updated_at).select("round");
-    if (upd && upd.length) return { state: next, round: upd[0].round };
+    if (upd && upd.length) return { state: next, round: upd[0]!.round };
   }
   throw new Error("The room is busy. Try again.");
 }
