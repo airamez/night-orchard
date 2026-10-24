@@ -60,6 +60,10 @@ function Home() {
           <Button type="submit" variant="secondary">Join</Button>
         </form>
       </section>
+
+      <div className="text-center">
+        <Link to="/how-to-play"><Button variant="outline" size="lg">Instructions — how to play</Button></Link>
+      </div>
     </main>
   );
 }
