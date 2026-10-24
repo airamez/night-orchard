@@ -51,8 +51,8 @@ export function addPlayer(s: GameState, id: string, name: string): GameState {
 export function startGame(s: GameState): GameState {
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
-    room: START_ROOMS[i % 4],
-    lantern: LANTERNS[i % 4],
+    room: START_ROOMS[i % 4]!,
+    lantern: LANTERNS[i % 4]!,
   }));
   const visited = Array.from(new Set(players.map((p) => p.room)));
   const firstVisitor: GameState["firstVisitor"] = {};
@@ -63,7 +63,7 @@ export function startGame(s: GameState): GameState {
   };
 }
 
-export function gkRoom(s: GameState): RoomId { return GK_PATH[s.gkIndex % GK_PATH.length]; }
+export function gkRoom(s: GameState): RoomId { return GK_PATH[s.gkIndex % GK_PATH.length]!; }
 
 /** Which actions are legal for this player right now. */
 export function isLegal(s: GameState, p: Player, a: Action): boolean {

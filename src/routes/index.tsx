@@ -27,7 +27,7 @@ function Home() {
   const [busy, setBusy] = useState(false);
 
   async function create() {
-    if (!name.trim()) return toast.error("Enter your name first.");
+    if (!name.trim()) { toast.error("Enter your name first."); return; }
     setBusy(true);
     try {
       const r = await createRoom({ data: { name: name.trim() } });

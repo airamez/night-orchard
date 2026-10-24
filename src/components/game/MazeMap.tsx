@@ -12,7 +12,7 @@ export function MazeMap({ state, me }: { state: GameState; me?: string }) {
       const k = [id, to].sort().join("|");
       if (seen.has(k)) continue;
       seen.add(k);
-      edges.push({ a: id, b: to!, hedge: !!r.hedge?.includes(dir as never) || !!ROOMS[to!].hedge?.some((d) => ROOMS[to!].exits[d] === id), locked: (r.lockedExit === dir || ROOMS[to!].lockedExit && ROOMS[to!].exits[ROOMS[to!].lockedExit!] === id) && !state.doorUnlocked });
+      edges.push({ a: id, b: to!, hedge: !!r.hedge?.includes(dir as never) || !!ROOMS[to!].hedge?.some((d) => ROOMS[to!].exits[d] === id), locked: !!(r.lockedExit === dir || ROOMS[to!].lockedExit && ROOMS[to!].exits[ROOMS[to!].lockedExit!] === id) && !state.doorUnlocked });
     }
   }
   const shown = new Set<RoomId>(visited);

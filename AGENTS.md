@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture
+- Game rules live in pure `src/game/engine.ts` (tested); server functions in `src/game/room.functions.ts` are the only writers — browsers never resolve rounds.
+- Whole room state is one realtime `rooms` row; seat tokens live in `room_seats` (service-role only); `resolve_round` RPC is the round-guarded write.

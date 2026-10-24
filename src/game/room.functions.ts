@@ -28,7 +28,7 @@ async function mutate(db: Db, code: string, fn: (s: GameState) => GameState) {
     const { data: upd } = await db.from("rooms")
       .update({ state: next as never, updated_at: new Date().toISOString() })
       .eq("code", code).eq("updated_at", row.updated_at).select("round");
-    if (upd && upd.length) return { state: next, round: upd[0].round };
+    if (upd && upd.length) return { state: next, round: upd[0]!.round };
   }
   throw new Error("The room is busy. Try again.");
 }
@@ -39,7 +39,7 @@ async function maybeResolve(db: Db, code: string, state: GameState, round: numbe
 }
 
 export const createRoom = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ name: z.string().trim().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const seatId = crypto.randomUUID();
@@ -55,7 +55,7 @@ export const createRoom = createServerFn({ method: "POST" })
   });
 
 export const joinRoom = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
@@ -86,8 +86,10 @@ const opSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("chat"), text: z.string().trim().min(1).max(240) }),
 ]);
 
+export type RoomOp = z.infer<typeof opSchema>;
+
 export const roomAction = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), body: opSchema }).parse(d))
+  .validator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), body: opSchema }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
