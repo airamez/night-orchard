@@ -14,13 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      room_seats: {
+        Row: {
+          code: string
+          seat_id: string
+          token: string
+        }
+        Insert: {
+          code: string
+          seat_id: string
+          token: string
+        }
+        Update: {
+          code?: string
+          seat_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_seats_code_fkey"
+            columns: ["code"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          code: string
+          round: number
+          state: Json
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          round?: number
+          state: Json
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          round?: number
+          state?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      resolve_round: {
+        Args: { p_code: string; p_round: number; p_state: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
