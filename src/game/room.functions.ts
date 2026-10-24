@@ -86,6 +86,8 @@ const opSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("chat"), text: z.string().trim().min(1).max(240) }),
 ]);
 
+export type RoomOp = z.infer<typeof opSchema>;
+
 export const roomAction = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), body: opSchema }).parse(d))
   .handler(async ({ data }) => {

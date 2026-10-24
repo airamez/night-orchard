@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MazeMap } from "@/components/game/MazeMap";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
-import { joinRoom, roomAction } from "@/game/room.functions";
+import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
 import { loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
 export const Route = createFileRoute("/room/$code")({
@@ -34,7 +34,7 @@ function RoomPage() {
   if (!state || !seatLoaded) return <Centered><p className="text-muted-foreground">Opening the gate…</p></Centered>;
 
   const me = seat && state.players.find((p) => p.id === seat.seatId) ? seat : null;
-  const send = async (body: Parameters<typeof roomAction>[0]["data"]["body"]) => {
+  const send = async (body: RoomOp) => {
     if (!me) return;
     try { await roomAction({ data: { code, token: me.token, body } }); } catch (e) { toast.error((e as Error).message); }
   };
@@ -48,7 +48,7 @@ function RoomPage() {
   return <Game state={state} me={me.seatId} send={send} />;
 }
 
-type Send = (body: Parameters<typeof roomAction>[0]["data"]["body"]) => Promise<void>;
+type Send = (body: RoomOp) => Promise<void>;
 
 function Centered({ children }: { children: React.ReactNode }) {
   return <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-5 text-center">{children}</main>;
@@ -129,7 +129,7 @@ function Game({ state, me, send }: { state: GameState; me: string; send: Send })
   const occupants = state.players.filter((p) => p.room === player.room && p.id !== me);
   const gkHere = gkRoom(state) === player.room;
 
-  const options: { label: string; action: Action; tone?: "shut" }[] = [];
+  const options: { label: string; action: Action; tone?: "shut" | undefined }[] = [];
   for (const [dir, to] of Object.entries(room.exits) as [Dir, string][]) {
     const a: Action = { type: "move", dir };
     if (!isLegal(state, player, a)) continue;
