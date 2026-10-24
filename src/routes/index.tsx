@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -60,6 +60,10 @@ function Home() {
           <Button type="submit" variant="secondary">Join</Button>
         </form>
       </section>
+
+      <div className="text-center">
+        <Link to="/how-to-play"><Button variant="outline" size="lg">Instructions — how to play</Button></Link>
+      </div>
     </main>
   );
 }
