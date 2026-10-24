@@ -39,7 +39,7 @@ async function maybeResolve(db: Db, code: string, state: GameState, round: numbe
 }
 
 export const createRoom = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ name: z.string().trim().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const seatId = crypto.randomUUID();
@@ -55,7 +55,7 @@ export const createRoom = createServerFn({ method: "POST" })
   });
 
 export const joinRoom = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
@@ -89,7 +89,7 @@ const opSchema = z.discriminatedUnion("op", [
 export type RoomOp = z.infer<typeof opSchema>;
 
 export const roomAction = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), body: opSchema }).parse(d))
+  .validator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), body: opSchema }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
