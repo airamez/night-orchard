@@ -82,9 +82,9 @@ function RoomPage() {
       setSeat(joined);
     }} />;
   }
-  if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} leave={leave} />;
+  if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} leave={leave} godMode={godModeUrl} />;
   if (state.phase === "won" || state.phase === "lost") return <EndScreen state={state} me={me.seatId} send={send} leave={leave} />;
-  return <Game code={code} state={state} me={me.seatId} send={send} leave={leave} />;
+  return <Game code={code} state={state} me={me.seatId} send={send} leave={leave} godMode={godModeUrl} />;
 }
 
 type Send = (body: RoomOp) => Promise<void>;
@@ -113,7 +113,7 @@ function JoinForm({ code, state, onJoined }: { code: string; state: GameState; o
   );
 }
 
-function Lobby({ code, state, me, send, leave }: { code: string; state: GameState; me: string; send: Send; leave: () => void }) {
+function Lobby({ code, state, me, send, leave, godMode }: { code: string; state: GameState; me: string; send: Send; leave: () => void; godMode?: boolean }) {
   const isHost = state.hostId === me;
   const url = typeof window !== "undefined" ? `${window.location.origin}/room/${code}` : "";
   return (
@@ -144,7 +144,7 @@ function Lobby({ code, state, me, send, leave }: { code: string; state: GameStat
           {state.players.length < 2 ? "Waiting for at least 2 players" : `Start with ${state.players.length} players`}
         </Button>
       ) : <p className="text-center text-muted-foreground">Waiting for the host to start…</p>}
-      {isHost && <GodModeButton code={code} />}
+      {isHost && godMode && <GodModeButton code={code} />}
       <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
     </main>
   );
@@ -169,7 +169,7 @@ function GodModeButton({ code }: { code: string }) {
   return <Button asChild size="sm" variant="outline"><Link to="/room/$code/god-mode" params={{ code }} target="_blank" rel="noopener noreferrer">God mode — all players</Link></Button>;
 }
 
-function Game({ code, state, me, send, leave }: { code: string; state: GameState; me: string; send: Send; leave: () => void }) {
+function Game({ code, state, me, send, leave, godMode }: { code: string; state: GameState; me: string; send: Send; leave: () => void; godMode?: boolean }) {
   const player = state.players.find((p) => p.id === me);
   const mine = state.pending[me];
   const locked = !!mine?.locked;
@@ -207,7 +207,7 @@ function Game({ code, state, me, send, leave }: { code: string; state: GameState
           <Button asChild size="sm" variant="outline">
             <Link to="/how-to-play" target="_blank" rel="noopener noreferrer" aria-label="Instructions (opens in a new tab)">Instructions</Link>
           </Button>
-          {isHost && <GodModeButton code={code} />}
+          {isHost && godMode && <GodModeButton code={code} />}
           {isHost && (
             <Button size="sm" variant="outline" disabled={restarting} onClick={async () => {
               if (!window.confirm("Restart the game for all players? Everyone returns to their starting room at round 1. Lanterns, the key, gate progress, chosen actions, and the Event log reset. Team chat and players stay.")) return;
