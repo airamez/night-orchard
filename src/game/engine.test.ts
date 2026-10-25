@@ -100,7 +100,7 @@ describe("Night Orchard rules", () => {
 
   it("restart draws a fresh password from the list and the gate accepts it", () => {
     let s = startGame(game(2));
-    expect(PASSWORD_PHRASES).toContain(...s.password.split(" "));
+    expect(s.password.split(" ").every((w) => PASSWORD_PHRASES.includes(w))).toBe(true);
     s.players[0]!.room = "gate";
     s = resolve(act(s, { p0: { type: "speak", text: s.password.toUpperCase() } }));
     expect(s.passwordSolved).toBe(true);

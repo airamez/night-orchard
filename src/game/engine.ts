@@ -202,7 +202,7 @@ export function resolve(prev: GameState): GameState {
     else if (p.outAt !== null) p.outAt = null;
   }
   // Share each newly explored room once, after all simultaneous arrivals are known.
-  for (const roomId of discovered) s.log.push(roomTip(r, roomId, s.players));
+  for (const roomId of discovered) s.log.push(roomTip(r, roomId, s.players, s.password || PASSWORD_PHRASES[0]!));
   // 8. Groundskeeper.
   s.gkIndex = (s.gkIndex + 1) % GK_PATH.length;
   const gk = gkRoom(s);
