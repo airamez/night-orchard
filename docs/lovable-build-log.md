@@ -654,3 +654,9 @@ Agreed as a standing rule: every session's messages are appended to this file (s
 > Only show the god mode button if the game ower use the URL with /god-mode sufix
 
 The God mode button no longer appears on a normal room link. It now shows (for the owner) only when the room URL carries a `?god-mode` suffix — for example `/room/ABCD?god-mode` — in the lobby and during play. The testing guide itself stays reachable at `/room/CODE/god-mode`. Updated `src/routes/room.$code.tsx` and `AGENTS.md`.
+
+## Session: god mode said "no winning plan" in a two-player game (2026-10-25)
+
+> I had a two players game and use the god-mode and followed the instructions but got this: Winning steps for every player … No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan.
+
+Replayed the room (T3CA) from the saved state. At round 11 the escape was genuinely impossible: the fastest two-player escape takes 13 rounds, leaving only 3 spare, and the log showed two rounds where a player stayed put instead of following the guide (round 7 and round 10 — most likely "Lock action" pressed without clicking a choice, which locks Wait) plus a groundskeeper delay. God mode now: (1) checks every possible move sequence when its normal plan fails, so it either finds a rescue or says plainly that dawn can no longer be beaten; (2) shows how many spare rounds the plan has; (3) warns, the moment a player locks an off-plan action that slows or loses the escape, who it was and what to choose instead. Added three tests (40 game tests pass) and checked the T3CA guide in the browser.
