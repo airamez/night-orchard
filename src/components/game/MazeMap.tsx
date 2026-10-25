@@ -19,29 +19,41 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
   }
   const shown = new Set<RoomId>(visited);
   for (const e of edges) { shown.add(e.a); shown.add(e.b); }
-  const rows = [...new Set(Object.values(ROOMS).map((room) => room.pos[1]))].sort((a, b) => a - b);
+  const roomWidth = 184;
+  const headerHeight = 34;
+  const playerLineHeight = 24;
+  const bodyHeight = (id: RoomId) => {
+    const count = state.players.filter((player) => player.room === id).length;
+    return count ? count * playerLineHeight + 10 : 8;
+  };
+  const height = (id: RoomId) => headerHeight + bodyHeight(id);
+  const rows = [...new Set([...shown].map((id) => ROOMS[id].pos[1]))].sort((a, b) => a - b);
   const rowY = new Map<number, number>();
   let nextY = 0;
   for (const row of rows) {
     rowY.set(row, nextY);
-    const occupants = Math.max(0, ...Object.values(ROOMS).filter((room) => room.pos[1] === row).map((room) => state.players.filter((player) => player.room === room.id).length));
-    nextY += Math.max(78, 54 + occupants * 20);
+    nextY += Math.max(...[...shown].filter((id) => ROOMS[id].pos[1] === row).map(height)) + 28;
   }
-  const position = (id: RoomId): [number, number] => [(ROOMS[id].pos[0] - 90) * 21 / 11, rowY.get(ROOMS[id].pos[1]) ?? 0];
+  const position = (id: RoomId): [number, number] => [(ROOMS[id].pos[0] - 90) / 110 * (roomWidth + 24), rowY.get(ROOMS[id].pos[1]) ?? 0];
   const points = [...shown].map((id) => {
     const [x, y] = position(id);
-    return { x, y, bottom: y + Math.max(12, state.players.filter((player) => player.room === id).length * 20 + 10) };
+    return { x, y, bottom: y + height(id) };
   });
-  const left = (points.length ? Math.min(...points.map((point) => point.x)) : 0) - 110;
-  const right = Math.max(0, ...points.map((point) => point.x)) + 110;
-  const top = Math.min(...points.map((point) => point.y), 0);
-  const visibleTop = points.length ? Math.min(...points.map((point) => point.y)) - 38 : top - 38;
-  const bottom = Math.max(0, ...points.map((point) => point.bottom)) + 12;
+  const left = (points.length ? Math.min(...points.map((point) => point.x)) : 0) - roomWidth / 2 - 3;
+  const right = (points.length ? Math.max(...points.map((point) => point.x)) : 0) + roomWidth / 2 + 3;
+  const visibleTop = (points.length ? Math.min(...points.map((point) => point.y)) : 0) - 3;
+  const bottom = Math.max(42, ...points.map((point) => point.bottom)) + 3;
 
   return (
     <svg viewBox={`${left} ${visibleTop} ${right - left} ${bottom - visibleTop}`} className="w-full min-w-[620px]" role="img" aria-label={label}>
       {edges.map((e) => {
-        const [x1, y1] = position(e.a); const [x2, y2] = position(e.b);
+        const [ax, ay] = position(e.a); const [bx, by] = position(e.b);
+        const horizontal = ay === by;
+        const direction = horizontal ? Math.sign(bx - ax) : Math.sign(by - ay);
+        const x1 = horizontal ? ax + direction * roomWidth / 2 : ax;
+        const x2 = horizontal ? bx - direction * roomWidth / 2 : bx;
+        const y1 = horizontal ? ay + headerHeight / 2 : direction > 0 ? ay + height(e.a) : ay;
+        const y2 = horizontal ? by + headerHeight / 2 : direction > 0 ? by : by + height(e.b);
         return <line key={e.a + e.b} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth={e.hedge || e.locked ? 4 : 2}
           strokeDasharray={e.locked ? "6 5" : undefined}
           className={e.hedge || e.locked ? "stroke-shut" : "stroke-hedge"} />;
@@ -50,14 +62,17 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
         const r = ROOMS[id]; const [x, y] = position(id); const known = visited.has(id);
         const here = state.players.filter((p) => p.room === id);
         return (
-          <g key={id}>
-            <circle cx={x} cy={y} r={here.length ? 10 : 7}
-              className={id === myRoom ? "fill-lantern" : known ? "fill-parchment" : "fill-muted stroke-border"} />
-            <text x={x} y={y - 19} textAnchor="middle" className="fill-foreground text-[18px] font-sans">{known ? r.title : "?"}</text>
+          <g key={id} aria-label={`${known ? r.title : "Unexplored room"}, ${here.length} players`}>
+            <rect x={x - roomWidth / 2} y={y} width={roomWidth} height={height(id)} rx={6}
+              strokeWidth={id === myRoom ? 2 : 1} className={`fill-card ${id === myRoom ? "stroke-lantern" : "stroke-border"}`} />
+            <path d={`M ${x - roomWidth / 2 + 6} ${y} H ${x + roomWidth / 2 - 6} Q ${x + roomWidth / 2} ${y} ${x + roomWidth / 2} ${y + 6} V ${y + headerHeight} H ${x - roomWidth / 2} V ${y + 6} Q ${x - roomWidth / 2} ${y} ${x - roomWidth / 2 + 6} ${y} Z`}
+              className={id === myRoom ? "fill-lantern" : known ? "fill-hedge" : "fill-muted"} />
+            <text x={x} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
+              className={`${id === myRoom ? "fill-ink" : "fill-parchment"} text-[18px] font-sans font-bold`}>{known ? r.title : "?"}</text>
             {here.map((p, index) => (
               <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title}`}>
                 <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title}</title>
-                <text x={x} y={y + 29 + index * 20} textAnchor="middle" textLength={p.name.length > 18 ? 180 : undefined} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[16px] font-sans font-bold`}>{p.name}</text>
+                <text x={x} y={y + headerHeight + 5 + playerLineHeight * (index + 0.5)} dominantBaseline="middle" textAnchor="middle" textLength={p.name.length > 18 ? roomWidth - 20 : undefined} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[16px] font-sans font-bold`}>{p.name}</text>
               </g>
             ))}
           </g>
