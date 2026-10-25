@@ -18,6 +18,9 @@ export interface Room {
   pos: [number, number];
 }
 
+/** Authored Orchard clue; the engine and UI substitute each game's own password for this line. */
+export const PASSWORD_LINE = "The night flower is called NIGHTBLOOM.";
+
 export const ROOMS: Record<RoomId, Room> = {
   fountain: { id: "fountain", title: "Fountain Court", exits: { north: "hedge_knot", south: "well" }, prose: ["A dry fountain and a stone fish.", "Chalk on the rim reads:", "The big key is under the bell."], pos: [200, 300] },
   hedge_knot: { id: "hedge_knot", title: "Hedge Knot", exits: { south: "fountain", west: "sun_stone", east: "bell_lawn", north: "rose_walk" }, hedge: ["north"], prose: ["Four hedges meet. The north one is woven shut.", "A sign reads:", "It opens while someone holds the sun stone, or holds the walk beyond it."], pos: [200, 220] },
@@ -31,7 +34,7 @@ export const ROOMS: Record<RoomId, Room> = {
   well: { id: "well", title: "The Well", exits: { north: "fountain", east: "glass_house", south: "moon_arch" }, shrine: "Well", prose: ["A ring of old stones.", "A plaque reads:", "Well lanterns wake here."], pos: [200, 380] },
   moon_arch: { id: "moon_arch", title: "Moon Arch", exits: { north: "well" }, shrine: "Moon", prose: ["A pale stone arch.", "A plaque reads:", "Moon lanterns wake here."], pos: [200, 455] },
   glass_house: { id: "glass_house", title: "Glass House", exits: { west: "well", east: "orchard" }, lockedExit: "east", prose: ["Fogged glass panes.", "The east door has a heavy lock made for the iron key."], pos: [310, 380] },
-  orchard: { id: "orchard", title: "The Orchard", exits: { west: "glass_house" }, prose: ["Dark fruit trees.", "Words are carved in the bark:", "The night flower is called NIGHTBLOOM."], pos: [420, 380] },
+  orchard: { id: "orchard", title: "The Orchard", exits: { west: "glass_house" }, prose: ["Dark fruit trees.", "Words are carved in the bark:", PASSWORD_LINE], pos: [420, 380] },
 };
 
 export const START_ROOMS: RoomId[] = ["fountain", "bell_lawn", "well", "hedge_knot"];
@@ -41,4 +44,5 @@ export const GK_PATH: RoomId[] = ["oak_shrine", "bell_lawn", "hedge_knot", "foun
 export const ROUND_LIMIT = 16;
 /** Max characters in a player name — kept short so names always fit inside map room boxes. */
 export const NAME_MAX = 14;
-export const PASSWORD = "nightbloom";
+/** The gate password is drawn fresh from this list for every game start and restart. */
+export const PASSWORD_PHRASES = ["nightbloom", "moonvine", "duskrose", "starlily", "shadowfern", "emberiris", "mistblossom", "midnightbell", "veilpetal", "gloamsnap"];
