@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { useRoom } from "@/game/useRoom";
-import { ROOMS } from "@/game/map";
-import { winningAction, winningPlan } from "@/game/winningPlan";
+import { ROOMS, ROUND_LIMIT } from "@/game/map";
+import { lockWarnings, winningAction, winningPlan } from "@/game/winningPlan";
 
 export const Route = createFileRoute("/room/$code_/god-mode")({
   head: ({ params }) => ({ meta: [
@@ -22,6 +22,8 @@ function GodMode() {
   const code = Route.useParams().code.toUpperCase();
   const { state, missing } = useRoom(code);
   const plan = useMemo(() => state ? winningPlan(state) : null, [state]);
+  const warnings = useMemo(() => state && plan ? lockWarnings(state, plan) : [], [state, plan]);
+  const spare = plan?.won ? ROUND_LIMIT - (plan.steps.at(-1)?.round ?? ROUND_LIMIT) : 0;
   return (
     <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
@@ -39,8 +41,26 @@ function GodMode() {
             <p className="text-sm text-muted-foreground">This guide updates with the room and does not play for you. It reveals the password, so the key and Orchard detour are not needed.</p>
           </div>
           {state.phase === "lobby" && <p className="text-lantern">Start the game in the owner's window. These steps use the starting rooms assigned to this team.</p>}
-          {state.phase === "won" ? <p className="font-serif text-3xl text-lantern">Everyone escaped — victory!</p> : state.phase === "lost" ? <p className="text-alert">Dawn has arrived. Restart from the owner's window for a fresh winning plan.</p> : !plan.won ? <p className="text-alert">No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan.</p> : (
+          {warnings.length > 0 && (
+            <div role="alert" className="space-y-1 border border-alert p-3 text-sm">
+              <p className="font-semibold text-alert">A locked action is off-plan and {plan.won ? "slows the escape" : "loses the game"}:</p>
+              <ul className="list-disc pl-5">
+                {warnings.map((w) => (
+                  <li key={w.id}><b>{w.name}</b> locked “{winningAction(w.locked, w.room)}”. In {w.name}'s window press “Locked — change” and choose <b className="text-lantern">{winningAction(w.suggested, w.room)}</b>.</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {state.phase === "won" ? <p className="font-serif text-3xl text-lantern">Everyone escaped — victory!</p> : state.phase === "lost" ? <p className="text-alert">Dawn has arrived. Restart from the owner's window for a fresh winning plan.</p> : !plan.won ? (
+            <div className="space-y-2 text-alert">
+              {plan.impossible
+                ? <p>The team can no longer reach the Outer Lawn before dawn (round {ROUND_LIMIT}) from round {state.round} — every possible sequence of moves was checked. Earlier rounds went off-plan (a missed move, a Wait, or a groundskeeper delay), and the plan had no spare rounds left.</p>
+                : <p>No complete winning plan found from this position.</p>}
+              <p>Restart from the owner's window to follow a fresh plan. Tip: in each window, click the action first so “Chosen” shows it, then press Lock action — locking without choosing locks Wait.</p>
+            </div>
+          ) : (
             <div className="space-y-6">
+              <p className="text-sm text-muted-foreground">{spare > 0 ? `Spare rounds before dawn: ${spare}. Each missed or wrong action usually costs one.` : "No spare rounds — every action below must be followed exactly."}</p>
               {plan.steps.map((step, index) => (
                 <section key={step.round} aria-label={`Round ${step.round}`} className="border-t border-border pt-4">
                   <h3 className="mb-3 flex flex-wrap items-center gap-3 font-serif text-xl">

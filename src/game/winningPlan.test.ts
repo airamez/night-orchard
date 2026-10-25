@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { addPlayer, newLobby, resolve, startGame } from "./engine";
-import { winningPlan } from "./winningPlan";
+import { lockWarnings, winningPlan } from "./winningPlan";
 
 describe("testing winning guide", () => {
   for (const count of [2, 3, 4, 5, 6, 7, 8]) {
@@ -98,5 +98,36 @@ describe("testing winning guide", () => {
     const { plan: recovery, state: end } = playOut(state);
     expect(recovery.won).toBe(true);
     expect(end.phase).toBe("won");
+  });
+
+  // Jose's two-player room T3CA at round 11: one player delayed at the Hedge Knot.
+  function tightTwoPlayer(round: number, gkIndex: number, delayed: boolean) {
+    const state = startGame(addPlayer(newLobby("p0", "Master"), "p1", "Player"));
+    state.round = round; state.gkIndex = gkIndex;
+    state.players[0]!.room = "sun_stone"; state.players[0]!.lit = true;
+    state.players[1]!.room = "hedge_knot"; state.players[1]!.lit = true; state.players[1]!.delayed = delayed;
+    return state;
+  }
+
+  it("proves the escape is impossible when dawn can no longer be beaten", () => {
+    const plan = winningPlan(tightTwoPlayer(11, 4, true));
+    expect(plan.won).toBe(false);
+    expect(plan.impossible).toBe(true);
+  });
+
+  it("warns when a locked Wait costs the escape, suggesting the winning move", () => {
+    const state = tightTwoPlayer(10, 3, false);
+    expect(winningPlan(state).won).toBe(true);
+    state.pending["p1"] = { action: { type: "wait" }, locked: true };
+    const warnings = lockWarnings(state, winningPlan(state));
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]!.id).toBe("p1");
+    expect(warnings[0]!.suggested).toEqual({ type: "move", dir: "north" });
+  });
+
+  it("does not warn when the locked action matches the plan", () => {
+    const state = tightTwoPlayer(10, 3, false);
+    state.pending["p1"] = { action: { type: "move", dir: "north" }, locked: true };
+    expect(lockWarnings(state, winningPlan(state))).toEqual([]);
   });
 });

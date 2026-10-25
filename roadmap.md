@@ -7,3 +7,4 @@
 - [x] Fix god mode giving up ("No complete winning plan") when the game drifts from the plan — planner now recovers from delays, deviating locks, stranded holders, and players stuck past the hedge.
 - [x] Explain event-log delay messages (R15 stumbles = delayed by the groundskeeper, action cancelled).
 - [x] Always append new chat messages (user + assistant) to docs/lovable-build-log.md — standing rule, do it every turn.
+- [x] God mode: explain when a position is truly lost (exhaustive check), show spare rounds, and warn about locked actions that cost the escape.
