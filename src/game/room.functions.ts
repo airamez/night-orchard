@@ -3,7 +3,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { addPlayer, allLocked, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
 import { NAME_MAX } from "./map";
-import { publicAddress, locationFromResponse } from "./activity";
+import { publicAddress, locationFromResponse, approximateLocationSchema, hasCapturedLocation } from "./activity";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const randomCode = () => Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join("");
@@ -151,7 +151,7 @@ export const roomAction = createServerFn({ method: "POST" })
   });
 
 export const trackRoomVisit = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), godMode: z.boolean() }).parse(d))
+  .inputValidator((d) => z.object({ code: z.string().length(4), token: z.string().min(10), godMode: z.boolean(), location: approximateLocationSchema.optional() }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
@@ -160,16 +160,18 @@ export const trackRoomVisit = createServerFn({ method: "POST" })
     const state = row?.state as unknown as GameState | undefined;
     if (!state?.players.some((p) => p.id === seatId)) throw new Error("Your seat is no longer active.");
     if (data.godMode && !row?.activity_god_mode) await mutate(db, code, (s) => s, { godMode: true });
-    const { data: existing } = await db.from("player_locations").select("seat_id").eq("seat_id", seatId).maybeSingle();
-    if (existing) return { ok: true };
+    const { data: existing } = await db.from("player_locations").select("country").eq("seat_id", seatId).maybeSingle();
+    if (hasCapturedLocation(existing)) return { ok: true, located: true };
     const ip = publicAddress(getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-real-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim());
-    let location: ReturnType<typeof locationFromResponse> = null;
-    if (ip) {
+    let location: ReturnType<typeof locationFromResponse> = data.location ?? null;
+    if (!location && ip) {
       try {
         const response = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}`, { signal: AbortSignal.timeout(2500) });
         if (response.ok) location = locationFromResponse(await response.json());
       } catch { /* Location is optional; never log an address or provider response. */ }
     }
-    await db.from("player_locations").upsert({ seat_id: seatId, city: location?.city ?? null, region: location?.region ?? null, country: location?.country ?? null }, { onConflict: "seat_id", ignoreDuplicates: true });
-    return { ok: true };
+    if (!location?.country) return { ok: true, located: false };
+    const { error } = await db.from("player_locations").upsert({ seat_id: seatId, ...location }, { onConflict: "seat_id" });
+    if (error) throw new Error("Location could not be saved.");
+    return { ok: true, located: true };
   });

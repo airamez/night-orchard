@@ -10,6 +10,16 @@ export const dashboardSchema = z.object({
 });
 export type Dashboard = z.infer<typeof dashboardSchema>;
 
+export const approximateLocationSchema = z.object({
+  city: z.string().trim().min(1).max(100).nullable(),
+  region: z.string().trim().min(1).max(100).nullable(),
+  country: z.string().trim().min(1).max(100),
+}).strict();
+
+export function hasCapturedLocation(value: { country?: string | null } | null | undefined) {
+  return Boolean(value?.country?.trim());
+}
+
 export function publicAddress(value: string | undefined): string | null {
   if (!value || !ipaddr.isValid(value.trim())) return null;
   const address = ipaddr.process(value.trim());

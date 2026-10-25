@@ -1,5 +1,10 @@
 # Roadmap
 
+- [x] Diagnose and repair missing location capture; verify retry behavior and privacy.
+- [x] Add a shared report/suggestion form with 255-character fields (email draft until sender setup).
+- [ ] Enable automatic report emails after the sender domain is configured (waiting on user).
+- [x] Verify changes and append this exchange to the build log.
+
 - [x] Resume and complete the dashboard after the credit top-up (2026-10-25).
 - [x] Add /dashboard with game, player, outcome, and God mode totals.
 - [x] Persist restart-safe activity and approximate locations without IP addresses.
