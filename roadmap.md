@@ -3,3 +3,5 @@
 - [x] Verify instructions open without replacing an active game.
 - [x] Enlarge maps and add a full-map dialog with live player positions.
 - [x] Verify the map dialog during a real game and on a narrow screen.
+- [ ] Replace room circles with compact headers and occupant-sized player boxes.
+- [ ] Verify empty and occupied room boxes in the guide and live full map.
