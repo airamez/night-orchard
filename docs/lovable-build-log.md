@@ -706,3 +706,11 @@ Added the database groundwork for restart-safe game activity, participants, and 
 > I adde more credits, complete the dashboard
 
 Resumed the dashboard with game, player, win, loss, God mode, and approximate city/state/country totals. Added automatic refresh, restart-safe game tracking, seat-verified God mode tracking, and optional IP geolocation that saves only city, region, and country, never IP addresses. Local/private addresses and failed lookups remain unknown rather than blocking gameplay.
+
+Completed `/dashboard`. Browser checks confirmed new games, unique player-seat counts, restart records, God mode usage, and victories after real two-player games. The dashboard displayed seven victories after testing, with no browser errors or horizontal overflow. All 43 activity/game tests passed. Corrected tracking so leaving after a finished game cannot replace its outcome. Historical games are included, but earlier restarts and locations cannot be reconstructed. Local testing has no public player IP, so actual location capture remains unverified until public traffic. Uses the free ipwho.is lookup, not Google; the provider receives the transient address, while the app saves only city, region, and country. The dashboard is public and returns only aggregates. Publishing was not requested.
+
+> Are you stuck?
+
+**Assistant:** No—the dashboard checks passed; I’m finishing the chat log now, then I’ll summarize what’s ready.
+
+**Completion reply:** Dashboard completed and tested at `/dashboard`; publishing is still needed, and real-player location capture remains unverified.
