@@ -684,3 +684,9 @@ Explained that a red movement button warns that its route crosses the shut hedge
 > Create and add icons to the action option: North, South, East, West = Arrows points Up, Down, Right and Left and create nice icons to the action type
 
 Every action button now leads with an icon: direction arrows (North = up, South = down, East = right, West = left) for movement, plus themed icons for the other action types — key for picking up the iron key, box-minus for dropping it, open door for using it on the door, hand for Hold, flame for lighting the lantern, hourglass for Wait, musical note for Distract, and speech mic for Speak at the gate. The same icons appear in the "Chosen" line and in each player row of the God mode plan, so planned moves are easy to match with the buttons. Added `src/components/game/ActionIcon.tsx`; browser-checked a two-player game (move, pickup/drop, wait all render) and all 40 game tests pass.
+
+## Session: architecture document (2026-10-25)
+
+> Add an archtecture.md file giving a high level summary about the full tech stack used in this project and add some mermai diagram show how to components are related. Make sure to explain which technlogy was used to keep each player browser updated and receiving new notifications
+
+Added `architecture.md` with the tech stack table, data model, a component diagram and a round sequence diagram (Mermaid). It explains that every browser stays in sync through Lovable Cloud Realtime (Postgres changes pushed over WebSockets) subscribed to the room's row, and that Event log and chat notifications travel inside that same pushed state.
