@@ -10,7 +10,7 @@ import { EndScreen } from "@/components/game/EndScreen";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { GK_PATH, NAME_MAX, PASSWORD_LINE, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, passwordClue, type Dir } from "@/game/map";
-import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
+import { joinRoom, roomAction, trackRoomVisit, type RoomOp } from "@/game/room.functions";
 import { winningPlan } from "@/game/winningPlan";
 import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
@@ -44,6 +44,10 @@ function RoomPage() {
   }, [code]);
 
   const inRoom = !!seat && !!state?.players.some((p) => p.id === seat.seatId);
+  useEffect(() => {
+    if (!seat || !inRoom) return;
+    void trackRoomVisit({ data: { code, token: seat.token, godMode: godModeUrl } }).catch(() => {});
+  }, [code, seat, inRoom, godModeUrl, state?.phase]);
   // If we had a seat but are no longer in the player list, we left or were removed.
   useEffect(() => {
     if (seatLoaded && seat && state && !inRoom) {

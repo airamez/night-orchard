@@ -696,3 +696,13 @@ Added `architecture.md` with the tech stack table, data model, a component diagr
 > Add a reference in the readme.md to the archtecture.md file
 
 `README.md` now points to `architecture.md`: a sentence in the **Tech** section ("The full technical picture — tech stack, data model, component and round diagrams, and how every browser stays in sync — is in architecture.md") and a new line in the **Project layout** listing. No game behavior changed.
+
+## Session: activity dashboard (2026-10-25)
+
+> Now add a DashBoard page to show summary data about the game activity: Number of games, players, win games, lost games, god-mode used. And add one section to indicate the city/state/country the players are from. Use some open source API obtain the geolocation information from the user based on the IP, bont don't store the IP just use to make the API call and store the data. I think google has a free api to translte IPs to location. The access to the dashboard should be using the URL https://night-orchard.lovable.app/dashboard
+
+Added the database groundwork for restart-safe game activity, participants, and approximate locations, with a public aggregate-only dashboard function. Credits ran out before the dashboard page and tracking integration could be completed.
+
+> I adde more credits, complete the dashboard
+
+Resumed the dashboard with game, player, win, loss, God mode, and approximate city/state/country totals. Added automatic refresh, restart-safe game tracking, seat-verified God mode tracking, and optional IP geolocation that saves only city, region, and country, never IP addresses. Local/private addresses and failed lookups remain unknown rather than blocking gameplay.

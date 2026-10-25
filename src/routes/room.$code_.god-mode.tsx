@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { ActionIcon } from "@/components/game/ActionIcon";
-import { useRoom } from "@/game/useRoom";
+import { loadSeat, useRoom } from "@/game/useRoom";
+import { trackRoomVisit } from "@/game/room.functions";
 import { ROOMS, ROUND_LIMIT } from "@/game/map";
 import { lockWarnings, winningAction, winningPlan } from "@/game/winningPlan";
 
@@ -22,6 +23,10 @@ export const Route = createFileRoute("/room/$code_/god-mode")({
 function GodMode() {
   const code = Route.useParams().code.toUpperCase();
   const { state, missing } = useRoom(code);
+  useEffect(() => {
+    const seat = loadSeat(code);
+    if (seat && state?.players.some((p) => p.id === seat.seatId)) void trackRoomVisit({ data: { code, token: seat.token, godMode: true } }).catch(() => {});
+  }, [code, state?.phase]);
   const plan = useMemo(() => state ? winningPlan(state) : null, [state]);
   const warnings = useMemo(() => state && plan ? lockWarnings(state, plan) : [], [state, plan]);
   const spare = plan?.won ? ROUND_LIMIT - (plan.steps.at(-1)?.round ?? ROUND_LIMIT) : 0;
