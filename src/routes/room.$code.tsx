@@ -265,7 +265,7 @@ function Game({ code, state, me, send, leave, godMode }: { code: string; state: 
               <span className="text-sm text-muted-foreground">Chosen: <span className="text-foreground">{describe(mine?.action)}</span></span>
               {locked
                 ? <Button variant="secondary" onClick={() => send({ op: "unlock" })}>Locked — change</Button>
-                : <Button className="lantern-glow" onClick={() => send({ op: "lock" })}>Lock action</Button>}
+                : <Button className="lantern-glow" disabled={!mine?.action} title={mine?.action ? undefined : "Choose an action first"} onClick={() => send({ op: "lock" })}>{mine?.action ? "Lock action" : "Choose an action first"}</Button>}
             </div>
           </div>
 
