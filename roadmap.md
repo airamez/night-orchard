@@ -14,5 +14,7 @@
 - [x] Give every icon one fixed color set on its own plate so it reads on any room-box header.
 - [x] Left-align each player's lantern icon and name against the left edge of the room box.
 - [x] Show the shrine icon beside the "… lanterns wake here." line in the room info panel.
+- [ ] Add a /room/CODE/god-mode testing view with an owner-only new-tab winning guide.
+- [ ] Verify the winning steps against real game rules and the owner/guest views.
 
 
