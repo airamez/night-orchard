@@ -192,7 +192,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={leave}>Leave game</Button>
         </div>
       </header>
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <section className="space-y-4">
           <article className="panel-parchment p-4">
             <h2 className="font-serif text-2xl font-semibold">{room.title}</h2>
