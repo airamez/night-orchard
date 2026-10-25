@@ -49,7 +49,7 @@ function Home() {
 
       <section className="panel-night space-y-4 p-6">
         <label className="block text-sm text-muted-foreground" htmlFor="name">Your name</label>
-        <Input id="name" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Artur" />
+        <Input id="name" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Type your nickname here" />
         <Button className="w-full lantern-glow" size="lg" disabled={busy} onClick={create}>Create room</Button>
       </section>
 
