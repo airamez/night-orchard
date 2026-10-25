@@ -745,3 +745,13 @@ Checked the current preview in a fresh browser, opened the report dialog, filled
 > (Jose Santos) Did you test the call to get the location using the IP, why it failed? I already used the public one from google and it worked great
 
 **Assistant:** Yes—I retested ipwho.is with Google's public DNS IP, 8.8.8.8, and it returned San Jose, California, United States. The service works; the original failure was not conclusively traced, but the app could receive no usable player IP and then permanently save an unknown location, preventing retries. That retry bug is corrected, and the browser fallback passed a real two-player test; if you meant a Google location API, please share its name or documentation link so I can compare it.
+
+## Session: save feedback on the dashboard (2026-10-25)
+
+> Ideally the app should send the email to me but If you can't send email directly change the report bug or suggestion to instead of sending an email, save it to database table and add a section at the bottom of the dashboard listing them.
+
+**Assistant progress:** I’ll save reports in the app and list them at the bottom of the dashboard instead of opening email drafts.
+
+Implemented saved reports with title, description and submission date, public insert/read policies and database-enforced 255-character limits. The form validates input, shows saving/error/success states and warns that reports are public and should not include personal information. The dashboard lists the latest 200 reports newest first, refreshing every 30 seconds and through Refresh. Email drafts are removed and sender-domain setup is no longer required for this feature. Three feedback validation tests passed; a fresh browser submitted a labeled test report and read it back through /dashboard with no runtime errors. Current build reports build OK. The test report remains visible as a labeled verification entry.
+
+**Completion:** Reports now save directly and appear at the bottom of the public dashboard; tested successfully, with no email setup needed.
