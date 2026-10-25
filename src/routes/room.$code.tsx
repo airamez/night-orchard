@@ -241,9 +241,10 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
         <aside className="min-w-0 space-y-4">
           <div className="panel-night p-4"><MapView state={state} me={me} /></div>
           <Roster state={state} me={me} isHost={isHost} send={send} />
+          <EventLog state={state} />
         </aside>
       </div>
-      <EventLog state={state} />
+
     </main>
   );
 }
@@ -285,7 +286,7 @@ function EventLog({ state }: { state: GameState }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { ref.current?.scrollTo({ top: ref.current.scrollHeight }); }, [state.log.length]);
   return (
-    <section className="panel-night mt-5 p-4">
+    <section className="panel-night p-4">
       <h3 className="mb-2 text-sm uppercase tracking-widest text-muted-foreground">Event log</h3>
       <div ref={ref} className="max-h-60 space-y-1 overflow-y-auto font-serif text-sm">
         {state.log.map((l, i) => <p key={i}><span className="text-muted-foreground">R{l.r}</span> {l.text}</p>)}
