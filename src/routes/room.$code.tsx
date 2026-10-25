@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,6 +163,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
   const mine = state.pending[me];
   const locked = !!mine?.locked;
   const [word, setWord] = useState("");
+  const [restarting, setRestarting] = useState(false);
   const isHost = state.hostId === me;
   const lockedCount = state.players.filter((p) => state.pending[p.id]?.locked).length;
   const occupants = state.players.filter((p) => p.room === player.room && p.id !== me);
@@ -189,6 +191,16 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Button asChild size="sm" variant="outline">
             <Link to="/how-to-play" target="_blank" rel="noopener noreferrer" aria-label="Instructions (opens in a new tab)">Instructions</Link>
           </Button>
+          {isHost && (
+            <Button size="sm" variant="outline" disabled={restarting} onClick={async () => {
+              if (!window.confirm("Restart the game for all players? Everyone returns to their starting room at round 1. Lanterns, the key, gate progress, chosen actions, and the Event log reset. Team chat and players stay.")) return;
+              setRestarting(true);
+              try { await send({ op: "restart" }); } finally { setRestarting(false); }
+            }}>
+              <RotateCcw aria-hidden="true" />
+              {restarting ? "Restarting…" : "Restart game"}
+            </Button>
+          )}
           <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={leave}>Leave game</Button>
         </div>
       </header>
