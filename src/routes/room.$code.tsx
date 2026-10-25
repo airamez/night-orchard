@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
+import { ActionIcon } from "@/components/game/ActionIcon";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -267,17 +268,18 @@ function Game({ code, state, me, send, leave, godMode }: { code: string; state: 
             <div className="grid gap-2 sm:grid-cols-2">
               {options.map((o) => (
                 <Button key={o.label} disabled={locked} variant={same(o.action) ? "default" : o.tone === "shut" ? "destructive" : "outline"}
-                  className="h-auto justify-start whitespace-normal py-2 text-left" onClick={() => send({ op: "choose", action: o.action })}>{o.label}</Button>
+                  className="h-auto justify-start whitespace-normal py-2 text-left" onClick={() => send({ op: "choose", action: o.action })}>
+                  <ActionIcon action={o.action} className="mr-1.5 shrink-0" />{o.label}</Button>
               ))}
             </div>
             {player.room === "gate" && (
               <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (word.trim()) send({ op: "choose", action: { type: "speak", text: word.trim() } }); }}>
                 <Input value={word} disabled={locked} maxLength={40} onChange={(e) => setWord(e.target.value)} placeholder="Speak a password" />
-                <Button type="submit" variant="outline" disabled={locked}>Speak</Button>
+                <Button type="submit" variant="outline" disabled={locked}><ActionIcon action={{ type: "speak" }} className="mr-1.5" />Speak</Button>
               </form>
             )}
             <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
-              <span className="text-sm text-muted-foreground">Chosen: <span className="text-foreground">{describe(mine?.action)}</span></span>
+              <span className="text-sm text-muted-foreground">Chosen: <span className="inline-flex items-center gap-1.5 text-foreground"><ActionIcon action={mine?.action} size={14} />{describe(mine?.action)}</span></span>
               {locked
                 ? <Button variant="secondary" onClick={() => send({ op: "unlock" })}>Locked — change</Button>
                 : <Button className="lantern-glow" disabled={!mine?.action} title={mine?.action ? undefined : "Choose an action first"} onClick={() => send({ op: "lock" })}>{mine?.action ? "Lock action" : "Choose an action first"}</Button>}

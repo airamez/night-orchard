@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { LanternIcon } from "@/components/game/LanternIcon";
+import { ActionIcon } from "@/components/game/ActionIcon";
 import { useRoom } from "@/game/useRoom";
 import { ROOMS, ROUND_LIMIT } from "@/game/map";
 import { lockWarnings, winningAction, winningPlan } from "@/game/winningPlan";
@@ -78,7 +79,7 @@ function GodMode() {
                             {player && <LanternIcon lantern={player.lantern} size={20} className="shrink-0" />}
                             <div className="min-w-0"><b className="break-words">{p.name}</b><p className="text-xs text-muted-foreground">{ROOMS[p.room].title}</p></div>
                           </div>
-                          <p className="font-semibold text-lantern">{winningAction(p.action, p.room)}</p>
+                          <p className="flex items-center gap-1.5 font-semibold text-lantern"><ActionIcon action={p.action} size={14} className="shrink-0" />{winningAction(p.action, p.room)}</p>
                           <span className="text-xs text-muted-foreground">{locked ? "Locked ✓" : index === 0 ? "Choose + lock" : "Then lock"}</span>
                         </li>
                       );
