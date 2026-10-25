@@ -147,7 +147,7 @@ function describe(a: Action | undefined): string {
   }
 }
 
-function Game({ state, me, send }: { state: GameState; me: string; send: Send }) {
+function Game({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
   const player = state.players.find((p) => p.id === me)!;
   const room = ROOMS[player.room];
   const mine = state.pending[me];
@@ -173,9 +173,12 @@ function Game({ state, me, send }: { state: GameState; me: string; send: Send })
 
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-6">
-      <header className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+      <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-2xl">Night Orchard</h1>
-        <p className="text-sm text-muted-foreground">Round <span className="text-lantern">{state.round}</span> of {ROUND_LIMIT} · {lockedCount}/{state.players.length} locked</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Round <span className="text-lantern">{state.round}</span> of {ROUND_LIMIT} · {lockedCount}/{state.players.length} locked</p>
+          <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={leave}>Leave game</Button>
+        </div>
       </header>
       <div className="grid gap-5 md:grid-cols-[1.25fr_1fr]">
         <section className="space-y-4">
@@ -248,7 +251,12 @@ function Roster({ state, me, isHost, send }: { state: GameState; me: string; isH
             {state.phase === "playing" && (
               <div className="flex items-center gap-2">
                 <span className={lk ? "text-hedge" : "text-muted-foreground"}>{lk ? "locked" : "choosing"}</span>
-                {isHost && !lk && p.id !== me && send && <Button size="sm" variant="outline" onClick={() => send({ op: "forceWait", target: p.id })}>Set Wait</Button>}
+                {isHost && p.id !== me && send && (
+                  <>
+                    {!lk && <Button size="sm" variant="outline" onClick={() => send({ op: "forceWait", target: p.id })}>Set Wait</Button>}
+                    <Button size="sm" variant="outline" onClick={() => { if (window.confirm(`Remove ${p.name} from the game? The round will continue without them.`)) void send({ op: "kick", target: p.id }); }}>Kick</Button>
+                  </>
+                )}
               </div>
             )}
           </li>
@@ -290,7 +298,7 @@ function Chat({ state, send }: { state: GameState; send: Send }) {
   );
 }
 
-function EndScreen({ state, me, send }: { state: GameState; me: string; send: Send }) {
+function EndScreen({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
   const won = state.phase === "won";
   const helpers = [...state.players].filter((p) => p.helped > 0).sort((a, b) => b.helped - a.helped);
   const inside = state.players.filter((p) => p.room !== "outer_lawn");
@@ -315,6 +323,7 @@ function EndScreen({ state, me, send }: { state: GameState; me: string; send: Se
       </div>
       {state.hostId === me ? <Button size="lg" className="w-full lantern-glow" onClick={() => send({ op: "restart" })}>Restart</Button>
         : <p className="text-center text-muted-foreground">The host can restart with the same team.</p>}
+      <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
     </main>
   );
 }
