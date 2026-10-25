@@ -19,12 +19,12 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
   }
   const shown = new Set<RoomId>(visited);
   for (const e of edges) { shown.add(e.a); shown.add(e.b); }
-  const roomWidth = 184;
-  const headerHeight = 34;
-  const playerLineHeight = 24;
+  const roomWidth = 150;
+  const headerHeight = 26;
+  const playerLineHeight = 18;
   const bodyHeight = (id: RoomId) => {
     const count = state.players.filter((player) => player.room === id).length;
-    return count ? count * playerLineHeight + 10 : 8;
+    return count ? count * playerLineHeight + 8 : 6;
   };
   const height = (id: RoomId) => headerHeight + bodyHeight(id);
   const rows = [...new Set([...shown].map((id) => ROOMS[id].pos[1]))].sort((a, b) => a - b);
@@ -45,7 +45,7 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
   const bottom = Math.max(42, ...points.map((point) => point.bottom)) + 3;
 
   return (
-    <svg viewBox={`${left} ${visibleTop} ${right - left} ${bottom - visibleTop}`} className="w-full min-w-[620px]" role="img" aria-label={label}>
+    <svg viewBox={`${left} ${visibleTop} ${right - left} ${bottom - visibleTop}`} className="w-full" role="img" aria-label={label}>
       {edges.map((e) => {
         const [ax, ay] = position(e.a); const [bx, by] = position(e.b);
         const horizontal = ay === by;
@@ -68,11 +68,11 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
             <path d={`M ${x - roomWidth / 2 + 6} ${y} H ${x + roomWidth / 2 - 6} Q ${x + roomWidth / 2} ${y} ${x + roomWidth / 2} ${y + 6} V ${y + headerHeight} H ${x - roomWidth / 2} V ${y + 6} Q ${x - roomWidth / 2} ${y} ${x - roomWidth / 2 + 6} ${y} Z`}
               className={id === myRoom ? "fill-lantern" : known ? "fill-hedge" : "fill-muted"} />
             <text x={x} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
-              className={`${id === myRoom ? "fill-ink" : known ? "fill-parchment" : "fill-muted-foreground"} text-[18px] font-sans font-bold ${known ? "" : "opacity-70"}`}>{r.title}</text>
+              className={`${id === myRoom ? "fill-ink" : known ? "fill-parchment" : "fill-muted-foreground"} text-[13px] font-sans font-bold ${known ? "" : "opacity-70"}`}>{r.title}</text>
             {here.map((p, index) => (
               <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title}`}>
                 <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title}</title>
-                <text x={x} y={y + headerHeight + 5 + playerLineHeight * (index + 0.5)} dominantBaseline="middle" textAnchor="middle" textLength={p.name.length > 18 ? roomWidth - 20 : undefined} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[16px] font-sans font-bold`}>{p.name}</text>
+                <text x={x} y={y + headerHeight + 5 + playerLineHeight * (index + 0.5)} dominantBaseline="middle" textAnchor="middle" textLength={p.name.length > 18 ? roomWidth - 20 : undefined} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[12px] font-sans font-bold`}>{p.name}</text>
               </g>
             ))}
           </g>
