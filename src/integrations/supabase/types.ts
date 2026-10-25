@@ -44,6 +44,27 @@ export type Database = {
         }
         Relationships: []
       }
+      game_feedback: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       game_participants: {
         Row: {
           game_id: string
