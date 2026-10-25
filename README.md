@@ -19,7 +19,7 @@ To win, the team has to:
 - **Say the right name at the gate.** The gate asks for the flower that opens after dark. The answer is carved in the bark in the Orchard, so one player has to read it and tell the others.
 - **Dodge the groundskeeper.** He walks a fixed patrol. If he steps into your room, you are delayed and lose your next round entirely — the only counter is *Distract*, and it works only the round he walks in.
 
-Everyone escapes, or nobody does: the round ends when the last player reaches the Outer Lawn.
+Everyone escapes, or nobody does: the game is won only when every player is standing on the Outer Lawn, and lost if the 16th round ends first.
 
 ## Actions
 
