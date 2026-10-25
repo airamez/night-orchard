@@ -164,9 +164,10 @@ function HowToPlay() {
           <p>
             <b>Getting a team through, one round at a time.</b> Round 5: Jose stands on the Sun Stone and locks
             <b> Hold</b>; Leila at the Hedge Knot locks <b>North</b> and crosses to the Rose Walk. Round 6: Leila
-            (now beyond the hedge) locks <b>Hold</b>; Jose moves to the Hedge Knot and locks <b>North</b> and
-            crosses too. Two rounds, two players through, nobody wasted a move. Leila can then walk north to the
-            Gate while Jose repeats the trick for the next teammate.
+            (now beyond the hedge) locks <b>Hold</b>; Jose walks east from the Sun Stone to the Hedge Knot. Round
+            7: Leila locks <b>Hold</b> again; Jose locks <b>North</b> and crosses too. Three rounds, two players
+            through, and only Leila ever gave up a move. She can then walk north toward the Gate while Jose stays
+            on the Rose Walk holding the hedge open for the next teammate.
           </p>
         </Example>
         <Example>
