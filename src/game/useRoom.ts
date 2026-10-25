@@ -9,6 +9,7 @@ export function loadSeat(code: string): Seat | null {
   try { const v = localStorage.getItem(key(code)); return v ? (JSON.parse(v) as Seat) : null; } catch { return null; }
 }
 export function saveSeat(code: string, seat: Seat) { localStorage.setItem(key(code), JSON.stringify(seat)); }
+export function clearSeat(code: string) { localStorage.removeItem(key(code)); }
 
 export function useRoom(code: string) {
   const [state, setState] = useState<GameState | null>(null);

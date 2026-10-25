@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { MazeMap } from "@/components/game/MazeMap";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
-import { loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
+import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
 export const Route = createFileRoute("/room/$code")({
   head: ({ params }) => ({
@@ -26,26 +26,49 @@ export const Route = createFileRoute("/room/$code")({
 function RoomPage() {
   const code = Route.useParams().code.toUpperCase();
   const { state, missing } = useRoom(code);
+  const navigate = useNavigate();
   const [seat, setSeat] = useState<Seat | null>(null);
   const [seatLoaded, setSeatLoaded] = useState(false);
+  const [removed, setRemoved] = useState(false);
   useEffect(() => { setSeat(loadSeat(code)); setSeatLoaded(true); }, [code]);
+
+  const inRoom = !!seat && !!state?.players.some((p) => p.id === seat.seatId);
+  // If we had a seat but are no longer in the player list, we left or were removed.
+  useEffect(() => {
+    if (seatLoaded && seat && state && !inRoom) {
+      clearSeat(code);
+      setSeat(null);
+      setRemoved(true);
+      if (state.phase !== "lobby") void navigate({ to: "/" });
+    }
+  }, [seatLoaded, seat, state, inRoom, code, navigate]);
 
   if (missing) return <Centered><p className="font-serif text-2xl">No room with code {code}.</p><Link to="/" className="text-lantern underline">Back home</Link></Centered>;
   if (!state || !seatLoaded) return <Centered><p className="text-muted-foreground">Opening the gate…</p></Centered>;
+  if (removed && !seat) return <Centered><p className="font-serif text-2xl">You have left the garden.</p><Link to="/" className="text-lantern underline">Back home</Link></Centered>;
 
   const me = seat && state.players.find((p) => p.id === seat.seatId) ? seat : null;
   const send = async (body: RoomOp) => {
     if (!me) return;
     try { await roomAction({ data: { code, token: me.token, body } }); } catch (e) { toast.error((e as Error).message); }
   };
+  const leave = async () => {
+    if (!me || !window.confirm("Leave this game? The team will play on without you.")) return;
+    try {
+      await roomAction({ data: { code, token: me.token, body: { op: "leave" } } });
+      clearSeat(code);
+      setSeat(null);
+      void navigate({ to: "/" });
+    } catch (e) { toast.error((e as Error).message); }
+  };
 
   if (!me) {
     if (state.phase !== "lobby") return <Centered><p className="font-serif text-2xl">This game has already started.</p><Link to="/" className="text-lantern underline">Back home</Link></Centered>;
     return <JoinForm code={code} state={state} onJoined={setSeat} />;
   }
-  if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} />;
-  if (state.phase === "won" || state.phase === "lost") return <EndScreen state={state} me={me.seatId} send={send} />;
-  return <Game state={state} me={me.seatId} send={send} />;
+  if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} leave={leave} />;
+  if (state.phase === "won" || state.phase === "lost") return <EndScreen state={state} me={me.seatId} send={send} leave={leave} />;
+  return <Game state={state} me={me.seatId} send={send} leave={leave} />;
 }
 
 type Send = (body: RoomOp) => Promise<void>;
@@ -73,7 +96,7 @@ function JoinForm({ code, state, onJoined }: { code: string; state: GameState; o
   );
 }
 
-function Lobby({ code, state, me, send }: { code: string; state: GameState; me: string; send: Send }) {
+function Lobby({ code, state, me, send, leave }: { code: string; state: GameState; me: string; send: Send; leave: () => void }) {
   const isHost = state.hostId === me;
   const url = typeof window !== "undefined" ? `${window.location.origin}/room/${code}` : "";
   return (
@@ -88,9 +111,14 @@ function Lobby({ code, state, me, send }: { code: string; state: GameState; me: 
       </div>
       <ul className="panel-night divide-y divide-border">
         {state.players.map((p, i) => (
-          <li key={p.id} className="flex items-center justify-between px-4 py-3">
+          <li key={p.id} className="flex items-center justify-between gap-2 px-4 py-3">
             <span>{i + 1}. {p.name}{p.id === me && " (you)"}</span>
-            {p.id === state.hostId && <span className="text-xs text-lantern">host</span>}
+            <span className="flex items-center gap-2">
+              {p.id === state.hostId && <span className="text-xs text-lantern">host</span>}
+              {isHost && p.id !== me && (
+                <Button size="sm" variant="outline" onClick={() => { if (window.confirm(`Remove ${p.name} from the room?`)) void send({ op: "kick", target: p.id }); }}>Remove</Button>
+              )}
+            </span>
           </li>
         ))}
       </ul>
@@ -99,6 +127,7 @@ function Lobby({ code, state, me, send }: { code: string; state: GameState; me: 
           {state.players.length < 2 ? "Waiting for at least 2 players" : `Start with ${state.players.length} players`}
         </Button>
       ) : <p className="text-center text-muted-foreground">Waiting for the host to start…</p>}
+      <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
     </main>
   );
 }
@@ -118,7 +147,7 @@ function describe(a: Action | undefined): string {
   }
 }
 
-function Game({ state, me, send }: { state: GameState; me: string; send: Send }) {
+function Game({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
   const player = state.players.find((p) => p.id === me)!;
   const room = ROOMS[player.room];
   const mine = state.pending[me];
@@ -144,9 +173,12 @@ function Game({ state, me, send }: { state: GameState; me: string; send: Send })
 
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-6">
-      <header className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+      <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-2xl">Night Orchard</h1>
-        <p className="text-sm text-muted-foreground">Round <span className="text-lantern">{state.round}</span> of {ROUND_LIMIT} · {lockedCount}/{state.players.length} locked</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Round <span className="text-lantern">{state.round}</span> of {ROUND_LIMIT} · {lockedCount}/{state.players.length} locked</p>
+          <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={leave}>Leave game</Button>
+        </div>
       </header>
       <div className="grid gap-5 md:grid-cols-[1.25fr_1fr]">
         <section className="space-y-4">
@@ -219,7 +251,12 @@ function Roster({ state, me, isHost, send }: { state: GameState; me: string; isH
             {state.phase === "playing" && (
               <div className="flex items-center gap-2">
                 <span className={lk ? "text-hedge" : "text-muted-foreground"}>{lk ? "locked" : "choosing"}</span>
-                {isHost && !lk && p.id !== me && send && <Button size="sm" variant="outline" onClick={() => send({ op: "forceWait", target: p.id })}>Set Wait</Button>}
+                {isHost && p.id !== me && send && (
+                  <>
+                    {!lk && <Button size="sm" variant="outline" onClick={() => send({ op: "forceWait", target: p.id })}>Set Wait</Button>}
+                    <Button size="sm" variant="outline" onClick={() => { if (window.confirm(`Remove ${p.name} from the game? The round will continue without them.`)) void send({ op: "kick", target: p.id }); }}>Kick</Button>
+                  </>
+                )}
               </div>
             )}
           </li>
@@ -261,7 +298,7 @@ function Chat({ state, send }: { state: GameState; send: Send }) {
   );
 }
 
-function EndScreen({ state, me, send }: { state: GameState; me: string; send: Send }) {
+function EndScreen({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
   const won = state.phase === "won";
   const helpers = [...state.players].filter((p) => p.helped > 0).sort((a, b) => b.helped - a.helped);
   const inside = state.players.filter((p) => p.room !== "outer_lawn");
@@ -286,6 +323,7 @@ function EndScreen({ state, me, send }: { state: GameState; me: string; send: Se
       </div>
       {state.hostId === me ? <Button size="lg" className="w-full lantern-glow" onClick={() => send({ op: "restart" })}>Restart</Button>
         : <p className="text-center text-muted-foreground">The host can restart with the same team.</p>}
+      <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
     </main>
   );
 }
