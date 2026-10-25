@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ROUND_LIMIT } from "@/game/map";
+import { ROOMS, ROUND_LIMIT } from "@/game/map";
+import { MazeMap } from "@/components/game/MazeMap";
 
 export const Route = createFileRoute("/how-to-play")({
   head: () => ({
@@ -69,6 +70,33 @@ function HowToPlay() {
             Artur stands in the Fountain Court and reads: <i>"The big key is under the bell."</i> He types it in
             the chat. Airamez, who started on the Bell Lawn, picks up the iron key — he never would have known it
             mattered without his message.
+          </p>
+        </Example>
+      </Section>
+
+      <Section title="The full maze map">
+        <p>
+          The maze is <b>fixed, not randomly generated</b>. Every game uses these same 13 rooms, paths,
+          shrines, clues, and groundskeeper patrol. Starting rooms and lanterns are assigned in join order,
+          repeating after four players.
+        </p>
+        <p>
+          During play, your team’s map reveals rooms as anyone visits them. Connected rooms you have not
+          visited yet appear as question marks. This example reveals the whole layout, but not the room clues.
+        </p>
+        <figure className="mx-auto max-w-lg">
+          <MazeMap state={{ visited: Object.values(ROOMS).map((room) => room.id), players: [], doorUnlocked: false }} label="Full Night Orchard maze: all 13 rooms and their connections" />
+          <figcaption className="mt-3 text-sm text-muted-foreground">
+            Green lines are ordinary paths. The solid red path between Hedge Knot and Rose Walk needs a
+            holder; the dashed red path between Glass House and the Orchard needs the iron key.
+            The Gate also needs the password, and each player needs a lit lantern to reach the Outer Lawn.
+          </figcaption>
+        </figure>
+        <Example>
+          <p>
+            Jose starts in Fountain Court. To reach the Orchard, he can head south to the Well, east to
+            Glass House, then east again — but only after someone unlocks that last door with the iron key.
+            Each move takes one round; picking up and using the key take separate rounds too.
           </p>
         </Example>
       </Section>
