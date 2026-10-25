@@ -198,7 +198,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
             <h2 className="font-serif text-2xl font-semibold">{room.title}</h2>
             <ul className="mt-2 list-disc space-y-0.5 pl-5 font-serif text-base leading-snug">
               {room.prose.map((line, i) => (
-                <li key={i} className={i > 0 && room.prose[i - 1].endsWith(":") ? "ml-4 list-[circle]" : undefined}>{line}</li>
+                <li key={i} className={i > 0 && room.prose[i - 1]?.endsWith(":") ? "ml-4 list-[circle]" : undefined}>{line}</li>
               ))}
             </ul>
             <div className="mt-3 space-y-1 text-xs">
