@@ -26,6 +26,7 @@ export function sampleEndState(won: boolean): GameState {
     round: won ? 14 : 16,
     keyRoom: null,
     doorUnlocked: true,
+    password: "moonvine",
     passwordSolved: true,
     gkIndex: 3,
     visited: ["fountain", "bell_lawn", "well", "hedge_knot", "oak_shrine", "glass_house", "orchard", "rose_walk", "gate", "outer_lawn"],
