@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { addPlayer, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
-import { PASSWORD_PHRASES } from "./map";
+import { PASSWORD_PHRASES, PASSWORD_WORD_COUNT, passwordClue } from "./map";
 
 function game(n = 2): GameState {
   let s = newLobby("p0", "P0");
