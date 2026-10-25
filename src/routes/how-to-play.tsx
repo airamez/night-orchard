@@ -128,16 +128,53 @@ function HowToPlay() {
 
       <Section title="The woven hedge">
         <p>
-          The path between the Hedge Knot and the Rose Walk is woven shut. It opens only while at least one
-          player chooses <b>Hold</b> at the Sun Stone or the Rose Walk that same round. The holder gives up
-          their own move so teammates can pass.
+          When you stand in the <b>Hedge Knot</b>, your room text reads:
         </p>
         <Example>
           <p>
-            Jose is at the Hedge Knot and wants to go north to the Rose Walk. Leila is standing on the Sun Stone.
-            Both lock in: Leila chooses <b>Hold</b>, Jose chooses <b>North</b>. The hedge opens and Jose walks
-            through. If Leila had done anything else, the hedge would have stayed shut and Jose would have wasted
-            the round.
+            <b>Hedge Knot</b>
+            <br />
+            Four hedges meet. The north one is woven shut.
+            <br />
+            A sign reads:
+            <br />
+            <i>It opens while someone holds the sun stone, or holds the walk beyond it.</i>
+          </p>
+        </Example>
+        <p>Here is what each line means:</p>
+        <ul className="list-disc space-y-1 pl-6">
+          <li><b>"Four hedges meet"</b> — the Hedge Knot is a crossroads with four exits: south to the Fountain Court, west to the Sun Stone, east to the Bell Lawn, and north to the Rose Walk.</li>
+          <li><b>"The north one is woven shut"</b> — the north path to the Rose Walk is blocked. Choosing North normally does nothing and wastes your round (the map shows it as a solid red line).</li>
+          <li><b>"Someone holds the sun stone"</b> — a player standing on the <b>Sun Stone</b> chooses the <b>Hold</b> action that round.</li>
+          <li><b>"Or holds the walk beyond it"</b> — it also opens if a player who is already on the other side, in the <b>Rose Walk</b>, chooses Hold that same round.</li>
+        </ul>
+        <p>Three rules make it work:</p>
+        <ul className="list-disc space-y-1 pl-6">
+          <li>It opens <b>for that round only</b>. The hedge weaves shut again at the end of every round, so every crossing needs a fresh Hold.</li>
+          <li>The holder <b>gives up their move</b> — Hold is all they do that round.</li>
+          <li>You <b>cannot</b> choose Hold while standing in the Hedge Knot itself. Only the Sun Stone and the Rose Walk can hold it open. So someone must always help you: a player who stepped aside to the Sun Stone, or one who already crossed.</li>
+        </ul>
+        <p>
+          <b>Why it matters for winning:</b> the Rose Walk connects only to the Hedge Knot (through the hedge) and
+          to the Gate. That makes this one hedge <b>the only road to the Gate</b> — and every player must walk
+          through the Gate to escape. If the team cannot keep the hedge open, nobody can win, no matter how many
+          lanterns are lit.
+        </p>
+        <Example>
+          <p>
+            <b>Getting a team through, one round at a time.</b> Round 5: Jose stands on the Sun Stone and locks
+            <b> Hold</b>; Leila at the Hedge Knot locks <b>North</b> and crosses to the Rose Walk. Round 6: Leila
+            (now beyond the hedge) locks <b>Hold</b>; Jose walks east from the Sun Stone to the Hedge Knot. Round
+            7: Leila locks <b>Hold</b> again; Jose locks <b>North</b> and crosses too. Three rounds, two players
+            through, and only Leila ever gave up a move. She can then walk north toward the Gate while Jose stays
+            on the Rose Walk holding the hedge open for the next teammate.
+          </p>
+        </Example>
+        <Example>
+          <p>
+            <b>The classic mistake.</b> Artur is alone at the Hedge Knot and locks <b>North</b>. Nobody holds this
+            round, so the hedge stays shut and his round is wasted. There was nothing he could have done alone —
+            the fix was decided one round earlier in the chat: <i>"I need someone on the Sun Stone next round."</i>
           </p>
         </Example>
       </Section>
