@@ -729,3 +729,13 @@ Completed `/dashboard`. Browser checks confirmed new games, unique player-seat c
 Added a shared Report Bugs or Suggestion button with title and description, each capped at 255 characters. It currently prepares an email draft to night.orchard@airamez.com and clearly says the user must send it in their email app. Automatic app email is not enabled: no sender domain is configured, so the email setup action is offered before scaffolding or wiring managed sending. Twelve focused tests passed; build log reports build OK; browser verified the form and two-player dashboard location readback.
 
 **Completion:** Location capture now works in the tested two-player flow; publish to update the live game. The report form is available as an email draft; configure a sender domain to finish automatic email sending.
+
+## Session: check reported report-dialog crash (2026-10-25)
+
+> Preview reported: Cannot read properties of null (reading 'useRef') in the Radix Dialog.
+
+**Assistant:** I’ll check the blank-screen error and make sure opening the report form stays stable.
+
+Checked the current preview in a fresh browser, opened the report dialog, filled the title, refreshed, and reopened the dialog. Both runs succeeded with no runtime errors. The earlier telemetry references mixed React dependency versions following Vite's dependency optimization/reloads during the previous changes; only one installed React/React DOM version is present and the config already provides deduplication. No continuing crash was reproduced, so no speculative code changes were made. Current build reports build OK.
+
+**Completion:** The current report form opens without errors, including after refresh; reload the preview to clear the earlier error.
