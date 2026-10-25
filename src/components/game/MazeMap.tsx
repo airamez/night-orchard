@@ -1,7 +1,7 @@
 import { ROOMS, type RoomId } from "@/game/map";
 import type { GameState } from "@/game/engine";
 
-export function MazeMap({ state, me }: { state: GameState; me?: string }) {
+export function MazeMap({ state, me, label = "Map of explored rooms" }: { state: Pick<GameState, "visited" | "players" | "doorUnlocked">; me?: string; label?: string }) {
   const visited = new Set(state.visited);
   const myRoom = state.players.find((p) => p.id === me)?.room;
   const edges: { a: RoomId; b: RoomId; hedge: boolean; locked: boolean }[] = [];
@@ -9,17 +9,19 @@ export function MazeMap({ state, me }: { state: GameState; me?: string }) {
   for (const id of visited) {
     const r = ROOMS[id];
     for (const [dir, to] of Object.entries(r.exits)) {
+      if (!to) continue;
       const k = [id, to].sort().join("|");
       if (seen.has(k)) continue;
       seen.add(k);
-      edges.push({ a: id, b: to!, hedge: !!r.hedge?.includes(dir as never) || !!ROOMS[to!].hedge?.some((d) => ROOMS[to!].exits[d] === id), locked: !!(r.lockedExit === dir || ROOMS[to!].lockedExit && ROOMS[to!].exits[ROOMS[to!].lockedExit!] === id) && !state.doorUnlocked });
+      const neighbor = ROOMS[to];
+      edges.push({ a: id, b: to, hedge: !!r.hedge?.some((d) => d === dir) || !!neighbor.hedge?.some((d) => neighbor.exits[d] === id), locked: !!(r.lockedExit === dir || neighbor.lockedExit && neighbor.exits[neighbor.lockedExit] === id) && !state.doorUnlocked });
     }
   }
   const shown = new Set<RoomId>(visited);
   for (const e of edges) { shown.add(e.a); shown.add(e.b); }
 
   return (
-    <svg viewBox="40 -10 440 490" className="w-full" role="img" aria-label="Map of explored rooms">
+    <svg viewBox="20 -20 480 510" className="w-full" role="img" aria-label={label}>
       {edges.map((e) => {
         const [x1, y1] = ROOMS[e.a].pos; const [x2, y2] = ROOMS[e.b].pos;
         return <line key={e.a + e.b} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth={e.hedge || e.locked ? 4 : 2}

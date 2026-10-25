@@ -1,0 +1,3 @@
+- [x] Add an Instructions button during gameplay that opens a separate tab.
+- [x] Show the full map in instructions and explain the fixed layout.
+- [ ] Verify instructions open without replacing an active game.
