@@ -234,6 +234,8 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
                 : <Button className="lantern-glow" onClick={() => send({ op: "lock" })}>Lock action</Button>}
             </div>
           </div>
+
+          <Chat state={state} send={send} />
         </section>
 
         <aside className="min-w-0 space-y-4">
@@ -241,10 +243,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Roster state={state} me={me} isHost={isHost} send={send} />
         </aside>
       </div>
-      <div className="mt-5 grid gap-5 md:grid-cols-2">
-        <EventLog state={state} />
-        <Chat state={state} send={send} />
-      </div>
+      <EventLog state={state} />
     </main>
   );
 }
@@ -286,7 +285,7 @@ function EventLog({ state }: { state: GameState }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { ref.current?.scrollTo({ top: ref.current.scrollHeight }); }, [state.log.length]);
   return (
-    <section className="panel-night p-4">
+    <section className="panel-night mt-5 p-4">
       <h3 className="mb-2 text-sm uppercase tracking-widest text-muted-foreground">Event log</h3>
       <div ref={ref} className="max-h-60 space-y-1 overflow-y-auto font-serif text-sm">
         {state.log.map((l, i) => <p key={i}><span className="text-muted-foreground">R{l.r}</span> {l.text}</p>)}
