@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { feedbackEmail, feedbackSchema } from "./feedback";
+import { feedbackSchema } from "./feedback";
 
 describe("feedback", () => {
   it("allows a 255-character title and rejects 256", () => {
@@ -10,7 +10,7 @@ describe("feedback", () => {
     expect(feedbackSchema.safeParse({ title: "Bug", description: "a".repeat(255) }).success).toBe(true);
     expect(feedbackSchema.safeParse({ title: "Bug", description: "a".repeat(256) }).success).toBe(false);
   });
-  it("addresses only the owner's mailbox and encodes report content", () => {
-    expect(feedbackEmail({ title: "Bug & suggestion", description: "A? B\nC" })).toBe("mailto:night.orchard@airamez.com?subject=Bug%20%26%20suggestion&body=A%3F%20B%0AC");
+  it("rejects empty reports", () => {
+    expect(feedbackSchema.safeParse({ title: "  ", description: " " }).success).toBe(false);
   });
 });

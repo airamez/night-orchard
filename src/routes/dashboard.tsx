@@ -4,8 +4,10 @@ import { Activity, ArrowLeft, RefreshCw, Users, Trophy, Moon, WandSparkles, MapP
 import { Button } from "@/components/ui/button";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { getActivityDashboard } from "@/game/activity.functions";
+import { listFeedback } from "@/lib/feedback.functions";
 
 const activityQuery = queryOptions({ queryKey: ["activity-dashboard"], queryFn: () => getActivityDashboard(), refetchInterval: 30_000 });
+const feedbackQuery = queryOptions({ queryKey: ["feedback"], queryFn: () => listFeedback(), refetchInterval: 30_000 });
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [
@@ -16,7 +18,9 @@ export const Route = createFileRoute("/dashboard")({
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(activityQuery),
+  loader: async ({ context }) => {
+    await Promise.all([context.queryClient.ensureQueryData(activityQuery), context.queryClient.ensureQueryData(feedbackQuery)]);
+  },
   errorComponent: DashboardError,
   notFoundComponent: () => <main className="p-8">Activity not found.</main>,
   component: DashboardPage,
@@ -29,6 +33,7 @@ function DashboardError() {
 
 function DashboardPage() {
   const { data, refetch, isFetching } = useSuspenseQuery(activityQuery);
+  const { data: reports, refetch: refreshReports } = useSuspenseQuery(feedbackQuery);
   const finished = data.wins + data.losses;
   const rate = finished ? Math.round(data.wins / finished * 100) : 0;
   const metrics = [
@@ -42,7 +47,7 @@ function DashboardPage() {
     <main className="mx-auto max-w-6xl space-y-10 px-5 py-10">
       <header className="flex flex-wrap items-center justify-between gap-5 border-b border-border pb-6">
         <div><p className="mb-3 flex items-center gap-2 text-sm text-lantern"><LanternIcon lantern="Oak" size={22} />Night Orchard</p><h1 className="font-serif text-4xl">Game activity</h1></div>
-        <div className="flex gap-2"><Button variant="outline" onClick={() => void refetch()} disabled={isFetching}><RefreshCw className={isFetching ? "animate-spin" : ""} />Refresh</Button><Button asChild variant="ghost"><Link to="/"><ArrowLeft />Back to game</Link></Button></div>
+        <div className="flex gap-2"><Button variant="outline" onClick={() => { void refetch(); void refreshReports(); }} disabled={isFetching}><RefreshCw className={isFetching ? "animate-spin" : ""} />Refresh</Button><Button asChild variant="ghost"><Link to="/"><ArrowLeft />Back to game</Link></Button></div>
       </header>
       <section aria-label="Activity totals" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {metrics.map(({ label, value, icon: Icon, detail, tone }) => <article key={label} className="rounded-md border border-border bg-card p-5"><div className="flex items-center justify-between gap-2"><h2 className="text-sm text-muted-foreground">{label}</h2><Icon size={18} className={tone} /></div><p className={`my-4 font-serif text-4xl tabular-nums ${tone}`}>{value.toLocaleString("en-US")}</p><p className="text-xs text-muted-foreground">{detail}</p></article>)}
@@ -57,6 +62,10 @@ function DashboardPage() {
         <p className="text-xs leading-relaxed text-muted-foreground">Only approximate locations are saved, never IP addresses. VPNs and network providers may affect accuracy. Players are counted by their game seats, not identified people.</p>
       </section>
       <footer className="border-t border-border pt-5 text-xs text-muted-foreground">{data.historical > 0 ? `${data.historical} existing games included; earlier restarts and locations were not recorded. ` : ""}New activity is recorded from now on. Totals update every 30 seconds.</footer>
+      <section aria-label="Bug reports and suggestions" className="space-y-5 border-t border-border pt-8">
+        <h2 className="font-serif text-2xl">Bug reports and suggestions</h2>
+        {reports.length === 0 ? <p className="py-6 text-muted-foreground">No reports yet.</p> : <div className="divide-y divide-border">{reports.map((report) => <article key={report.id} className="space-y-2 py-5"><div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="min-w-0 break-words font-medium">{report.title}</h3><time className="text-xs text-muted-foreground" dateTime={report.created_at}>{new Date(report.created_at).toISOString().replace("T", " ").slice(0, 16)} UTC</time></div><p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{report.description}</p></article>)}</div>}
+      </section>
     </main>
   );
 }
