@@ -79,9 +79,9 @@ describe("Night Orchard rules", () => {
 
   it("gate needs the password and a lit lantern", () => {
     let s = game(2);
-    s.password = "nightbloom";
+    s.password = "nightbloom moonvine";
     s.players[0]!.room = "gate";
-    s = resolve(act(s, { p0: { type: "speak", text: "  NightBloom " } }));
+    s = resolve(act(s, { p0: { type: "speak", text: "  NightBloom  MoonVine " } }));
     expect(s.passwordSolved).toBe(true);
     s = resolve(act(s, { p0: { type: "move", dir: "north" } }));
     expect(s.players[0]!.room).toBe("gate");
@@ -90,17 +90,35 @@ describe("Night Orchard rules", () => {
     expect(s.players[0]!.room).toBe("outer_lawn");
   });
 
-  it("every game draws its password from the phrase list", () => {
+  it("every game draws its password words from the phrase list", () => {
     const s = game(3);
-    expect(PASSWORD_PHRASES).toContain(s.password);
+    const words = s.password.split(" ");
+    expect(words).toHaveLength(PASSWORD_WORD_COUNT);
+    expect(words.every((w) => PASSWORD_PHRASES.includes(w))).toBe(true);
+    expect(new Set(words).size).toBe(words.length);
   });
 
   it("restart draws a fresh password from the list and the gate accepts it", () => {
     let s = startGame(game(2));
-    expect(PASSWORD_PHRASES).toContain(s.password);
+    expect(PASSWORD_PHRASES).toContain(...s.password.split(" "));
     s.players[0]!.room = "gate";
     s = resolve(act(s, { p0: { type: "speak", text: s.password.toUpperCase() } }));
     expect(s.passwordSolved).toBe(true);
+  });
+
+  it("the password words must be spoken in the carved order", () => {
+    let s = game(2);
+    s.password = "nightbloom moonvine";
+    s.players[0]!.room = "gate";
+    s = resolve(act(s, { p0: { type: "speak", text: "moonvine nightbloom" } }));
+    expect(s.passwordSolved).toBe(false);
+    s = resolve(act(s, { p0: { type: "speak", text: "nightbloom moonvine" } }));
+    expect(s.passwordSolved).toBe(true);
+  });
+
+  it("the orchard clue shows every password word in order", () => {
+    expect(passwordClue("nightbloom moonvine"))
+      .toBe("The night flowers are called NIGHTBLOOM and MOONVINE — speak them at the Gate, in this order.");
   });
 
   it("the phrase list offers many unique lowercase words", () => {
