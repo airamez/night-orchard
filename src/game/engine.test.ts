@@ -90,6 +90,24 @@ describe("Night Orchard rules", () => {
     expect(s.players[0]!.room).toBe("outer_lawn");
   });
 
+  it("every game draws its password from the phrase list", () => {
+    const s = game(3);
+    expect(PASSWORD_PHRASES).toContain(s.password);
+  });
+
+  it("restart draws a fresh password from the list and the gate accepts it", () => {
+    let s = startGame(game(2));
+    expect(PASSWORD_PHRASES).toContain(s.password);
+    s.players[0]!.room = "gate";
+    s = resolve(act(s, { p0: { type: "speak", text: s.password.toUpperCase() } }));
+    expect(s.passwordSolved).toBe(true);
+  });
+
+  it("the phrase list offers many unique lowercase words", () => {
+    expect(new Set(PASSWORD_PHRASES).size).toBeGreaterThan(5);
+    expect(PASSWORD_PHRASES.every((p) => /^[a-z]+$/.test(p))).toBe(true);
+  });
+
   it("earlier seat gets the key when two take it", () => {
     let s = game(2);
     s.players[0]!.room = "bell_lawn";
