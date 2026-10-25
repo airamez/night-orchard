@@ -672,3 +672,9 @@ That exact wording only exists in the older version still running on the publish
 > I tried again and the same: … No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan. Do this, when in god mode auto select the correct move on each player, this will make my tests easier. Two more changes. - You introduced a bug where only this message is showed as the header of action panel: Your lantern: Oak — lit. No more icon. And make an indication on a room when the lattern i sused to light it. Make an gold border with some effect showing it has lights on
 
 The quoted message still comes from the older published version; the fixes only reach night-orchard.lovable.app after publishing. Added: (1) any player window opened with `?god-mode` on its room link now has that player's planned action chosen automatically every round — the player just presses Lock action (and can still change it); the God mode page explains the shortcut. (2) The lantern icon is back at the start of the "Your lantern" line, lit or not, with "(lit at …)" once lit. (3) On the map, every shrine where a lantern has been lit gets a softly pulsing gold border. Browser-checked a two-player game for 8 rounds: every round was pre-selected, and the Oak Shrine and The Well glowed after lighting.
+
+## Session: red action in God mode (2026-10-25)
+
+> Great, it worked, but I am wondering why something there is an action that is red and it is not the correct when god Mode.
+
+Explained that a red movement button warns that its route crosses the shut hedge; it is not God mode's recommended action. God mode selects the planned move separately, and the “Chosen” line shows what will be locked. Crossing the hedge requires another player to Hold at the Sun Stone or Rose Walk in the same round. No game behavior was changed.
