@@ -79,7 +79,9 @@ src/routes/          index.tsx (lobby), room.$code.tsx (play),
                      room.$code_.god-mode.tsx, how-to-play.tsx,
                      demo.victory.tsx, demo.defeat.tsx
 docs/                lovable-build-log.md (full build session)
+architecture.md      tech stack, data model, component and round diagrams
 ```
+
 
 ## Build with Lovable
 
