@@ -1,4 +1,4 @@
-import { GK_PATH, LANTERNS, PASSWORD, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, type Dir, type Lantern, type RoomId } from "./map";
+import { GK_PATH, LANTERNS, PASSWORD_LINE, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, type Dir, type Lantern, type RoomId } from "./map";
 
 export type ActionType = "wait" | "move" | "pickup" | "drop" | "usekey" | "hold" | "light" | "speak" | "distract";
 export interface Action { type: ActionType; dir?: Dir; text?: string }
@@ -22,6 +22,7 @@ export interface GameState {
   round: number;
   keyRoom: RoomId | null;
   doorUnlocked: boolean;
+  password: string;
   passwordSolved: boolean;
   gkIndex: number;
   visited: RoomId[];
@@ -34,7 +35,7 @@ export interface GameState {
 export function newLobby(hostId: string, hostName: string): GameState {
   return {
     phase: "lobby", hostId, players: [blankPlayer(hostId, hostName)], round: 0, keyRoom: "bell_lawn",
-    doorUnlocked: false, passwordSolved: false, gkIndex: 0, visited: [], firstVisitor: {}, pending: {}, log: [], chat: [],
+    doorUnlocked: false, password: "", passwordSolved: false, gkIndex: 0, visited: [], firstVisitor: {}, pending: {}, log: [], chat: [],
   };
 }
 
@@ -69,11 +70,16 @@ export function removePlayer(s: GameState, id: string): GameState {
   return next;
 }
 
+/** The Orchard clue is authored as PASSWORD_LINE; each game substitutes its own password. */
+function withPassword(line: string, password: string) {
+  return line === PASSWORD_LINE ? `The night flower is called ${password.toUpperCase()}.` : line;
+}
+
 /** Share the room's authored information without revealing unexplored rooms. */
-function roomTip(r: number, roomId: RoomId, players: Player[]): GameState["log"][number] {
+function roomTip(r: number, roomId: RoomId, players: Player[], password: string): GameState["log"][number] {
   const room = ROOMS[roomId];
   const names = players.filter((p) => p.room === roomId).map((p) => p.name).join(", ");
-  return { r, roomId, text: `${room.title} — discovered by ${names}: ${room.prose.join(" ")}` };
+  return { r, roomId, text: `${room.title} — discovered by ${names}: ${room.prose.map((l) => withPassword(l, password)).join(" ")}` };
 }
 
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
