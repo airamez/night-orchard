@@ -19,7 +19,19 @@ export interface Room {
 }
 
 /** Authored Orchard clue; the engine and UI substitute each game's own password for this line. */
-export const PASSWORD_LINE = "The night flower is called NIGHTBLOOM.";
+export const PASSWORD_LINE = "The night flowers are carved here.";
+
+/** How many words each game's password draws from the phrase list. */
+export const PASSWORD_WORD_COUNT = 2;
+
+/** The Orchard clue text for a game's password, e.g. "The night flowers are called NIGHTBLOOM and MOONVINE — speak them at the Gate, in this order." */
+export function passwordClue(password: string): string {
+  const words = password.trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return PASSWORD_LINE;
+  const upper = words.map((w) => w.toUpperCase());
+  if (upper.length === 1) return `The night flower is called ${upper[0]}.`;
+  return `The night flowers are called ${upper.slice(0, -1).join(", ")} and ${upper.at(-1)} — speak them at the Gate, in this order.`;
+}
 
 export const ROOMS: Record<RoomId, Room> = {
   fountain: { id: "fountain", title: "Fountain Court", exits: { north: "hedge_knot", south: "well" }, prose: ["A dry fountain and a stone fish.", "Chalk on the rim reads:", "The big key is under the bell."], pos: [200, 300] },
@@ -29,7 +41,7 @@ export const ROOMS: Record<RoomId, Room> = {
   ivy_wall: { id: "ivy_wall", title: "Ivy Wall", exits: { west: "bell_lawn" }, prose: ["Thick ivy and a dead end.", "Initials are carved in the leaves.", "The groundskeeper never walks here."], pos: [420, 220] },
   oak_shrine: { id: "oak_shrine", title: "Oak Shrine", exits: { north: "bell_lawn" }, shrine: "Oak", prose: ["A hollow oak with a slot the size of a lantern.", "A plaque reads:", "Oak lanterns wake here."], pos: [310, 300] },
   rose_walk: { id: "rose_walk", title: "Rose Walk", exits: { south: "hedge_knot", north: "gate" }, hedge: ["south"], prose: ["Roses gone to sleep. North is the gate.", "Choosing Hold here opens the shut hedge for this round only."], pos: [200, 140] },
-  gate: { id: "gate", title: "The Gate", exits: { south: "rose_walk", north: "outer_lawn" }, prose: ["An iron gate.", "A plaque reads:", "Say the name of the flower that opens after dark. The answer is not written here."], pos: [200, 75] },
+  gate: { id: "gate", title: "The Gate", exits: { south: "rose_walk", north: "outer_lawn" }, prose: ["An iron gate.", "A plaque reads:", "Say the night-flower words carved in the Orchard, in their order. The answer is not written here."], pos: [200, 75] },
   outer_lawn: { id: "outer_lawn", title: "Outer Lawn", exits: { south: "gate" }, prose: ["Open grass under the stars. You are outside.", "Wait for the others."], pos: [200, 15] },
   well: { id: "well", title: "The Well", exits: { north: "fountain", east: "glass_house", south: "moon_arch" }, shrine: "Well", prose: ["A ring of old stones.", "A plaque reads:", "Well lanterns wake here."], pos: [200, 380] },
   moon_arch: { id: "moon_arch", title: "Moon Arch", exits: { north: "well" }, shrine: "Moon", prose: ["A pale stone arch.", "A plaque reads:", "Moon lanterns wake here."], pos: [200, 455] },

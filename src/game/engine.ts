@@ -1,4 +1,4 @@
-import { GK_PATH, LANTERNS, PASSWORD_LINE, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, type Dir, type Lantern, type RoomId } from "./map";
+import { GK_PATH, LANTERNS, PASSWORD_LINE, PASSWORD_PHRASES, PASSWORD_WORD_COUNT, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, passwordClue, type Dir, type Lantern, type RoomId } from "./map";
 
 export type ActionType = "wait" | "move" | "pickup" | "drop" | "usekey" | "hold" | "light" | "speak" | "distract";
 export interface Action { type: ActionType; dir?: Dir; text?: string }
@@ -72,7 +72,7 @@ export function removePlayer(s: GameState, id: string): GameState {
 
 /** The Orchard clue is authored as PASSWORD_LINE; each game substitutes its own password. */
 function withPassword(line: string, password: string) {
-  return line === PASSWORD_LINE ? `The night flower is called ${password.toUpperCase()}.` : line;
+  return line === PASSWORD_LINE ? passwordClue(password) : line;
 }
 
 /** Share the room's authored information without revealing unexplored rooms. */
@@ -84,7 +84,9 @@ function roomTip(r: number, roomId: RoomId, players: Player[], password: string)
 
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
 export function startGame(s: GameState): GameState {
-  const password = PASSWORD_PHRASES[Math.floor(Math.random() * PASSWORD_PHRASES.length)]!;
+  const pool = [...PASSWORD_PHRASES];
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j]!, pool[i]!]; }
+  const password = pool.slice(0, Math.min(PASSWORD_WORD_COUNT, pool.length)).join(" ");
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
     room: START_ROOMS[i % 4]!,
