@@ -79,7 +79,8 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
               const rowY = y + headerHeight + 5 + playerLineHeight * (index + 0.5);
               const icon = 11;
               const gap = 5;
-              const startX = x - (icon + gap + p.name.length * 6.9) / 2;
+              const est = Math.min(p.name.length * 6.9, roomWidth - 14 - icon - gap);
+              const startX = x - (icon + gap + est) / 2;
               return (
                 <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title} with the ${p.lantern} lantern`}>
                   <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title} · {p.lantern} lantern</title>
