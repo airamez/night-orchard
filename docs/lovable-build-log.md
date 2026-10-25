@@ -648,3 +648,9 @@ Explained: R15 is round 15; Artur and Leila were in the room the groundskeeper w
 > remember to always update the docs/lovable-build-log.md file with the chat conent, my text and yours
 
 Agreed as a standing rule: every session's messages are appended to this file (saved to project memory so it is never forgotten).
+
+## Session: hiding the god-mode button behind a URL suffix (2026-10-25)
+
+> Only show the god mode button if the game ower use the URL with /god-mode sufix
+
+The God mode button no longer appears on a normal room link. It now shows (for the owner) only when the room URL carries a `?god-mode` suffix — for example `/room/ABCD?god-mode` — in the lobby and during play. The testing guide itself stays reachable at `/room/CODE/god-mode`. Updated `src/routes/room.$code.tsx` and `AGENTS.md`.
