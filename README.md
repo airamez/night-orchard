@@ -13,11 +13,11 @@ The garden is a fixed map of **13 rooms** — Fountain Court, Hedge Knot, Sun St
 
 To win, the team has to:
 
-- **Wake the lanterns.** Four lanterns (Oak, Well, Bell, Moon) only wake in their own shrine room, and a lit lantern is needed to work in the dark.
+- **Wake the lanterns.** Each player carries one of four lanterns (Oak, Well, Bell, Moon), and it only wakes in its own shrine room. Nobody leaves with an unlit lantern — the gate turns them back.
 - **Find the iron key.** It lies under the bell on Bell Lawn, and it is the only thing that opens the locked east door of the Glass House.
 - **Hold the woven hedge.** The north hedge at Hedge Knot is woven shut. It opens for one round only, and only while someone chooses *Hold* at Sun Stone or Rose Walk — so somebody has to stand still while the rest of the team walks through.
 - **Say the right name at the gate.** The gate asks for the flower that opens after dark. The answer is carved in the bark in the Orchard, so one player has to read it and tell the others.
-- **Dodge the groundskeeper.** He walks a fixed patrol. If he steps into your room while you are doing something that needs both hands, you are delayed and your next locked action is cancelled.
+- **Dodge the groundskeeper.** He walks a fixed patrol. If he steps into your room, you are delayed and lose your next round entirely — the only counter is *Distract*, and it works only the round he walks in.
 
 Everyone escapes, or nobody does: the round ends when the last player reaches the Outer Lawn.
 
