@@ -15,6 +15,7 @@
 - [x] Left-align each player's lantern icon and name against the left edge of the room box.
 - [x] Show the shrine icon beside the "… lanterns wake here." line in the room info panel.
 - [ ] Add a /room/CODE/god-mode testing view with an owner-only new-tab winning guide.
+- [ ] Show one concrete action for every player in every round, with live progress for solo team testing.
 - [ ] Verify the winning steps against real game rules and the owner/guest views.
 
 
