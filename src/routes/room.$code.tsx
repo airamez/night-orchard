@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
+import { LanternIcon } from "@/components/game/LanternIcon";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { GK_PATH, NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
@@ -226,7 +227,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
 
           <div className="panel-night space-y-3 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : `(wakes at ${ROOMS[SHRINE_OF[player.lantern]].title})`}</span>
+              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : <>(wakes at {ROOMS[SHRINE_OF[player.lantern]].title}) <LanternIcon lantern={player.lantern} size={16} /></>}</span>
             </div>
             {player.hasKey && <p className="text-lantern">You carry the iron key</p>}
             {player.delayed && <p className="text-sm text-alert">You are delayed: your next locked action will be cancelled.</p>}

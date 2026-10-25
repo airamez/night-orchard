@@ -9,3 +9,4 @@
 - [x] Verify shared tips in a real multiplayer round and update the guide.
 - [x] Move the Event log into the right column beside the Team chat so no panel spans the full width.
 - [x] Add and verify an owner-only restart button during play that resets the shared game after confirmation.
+- [x] Add retro pixel icons for each lantern/shrine pair in map room headers and beside the "wakes at" text.
