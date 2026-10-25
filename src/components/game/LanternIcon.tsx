@@ -17,6 +17,18 @@ const PALETTE: Record<string, string> = {
   r: "var(--icon-roof)",
 };
 
+/** Variant for pale/lit backgrounds (the yellow header of the room you are in). */
+const DARK_PALETTE: Record<string, string> = {
+  g: "var(--icon-leaf-dark)",
+  t: "var(--icon-trunk-dark)",
+  s: "var(--icon-stone-dark)",
+  d: "var(--icon-hole-dark)",
+  b: "var(--icon-brass-dark)",
+  h: "var(--icon-brass-hi-dark)",
+  m: "var(--icon-moon-dark)",
+  r: "var(--icon-roof-dark)",
+};
+
 const GRIDS: Record<Lantern, string[]> = {
   Oak: [
     "...ggggg....",
@@ -47,18 +59,18 @@ const GRIDS: Record<Lantern, string[]> = {
     "............",
   ],
   Bell: [
+    "....dddd....",
     "....bbbb....",
     "...bbbbbb...",
-    "...hbbbbb...",
-    "...hbbbbb...",
-    "...hbbbbb...",
-    "..hbbbbbbb..",
-    "..hbbbbbbb..",
-    ".hbbbbbbbbb.",
-    ".hbbbbbbbbb.",
+    "...bbbbbb...",
+    "..bbbbbbbb..",
+    "..bbbbbbbb..",
+    "..bbbbbbbb..",
+    ".bbbbbbbbbb.",
+    ".bbbbbbbbbb.",
     "bbbbbbbbbbbb",
-    "....dddd....",
-    "............",
+    "dddddddddddd",
+    ".....dd.....",
   ],
   Moon: [
     "....mmmm....",
@@ -84,11 +96,12 @@ export const LANTERN_ICON_LABEL: Record<Lantern, string> = {
 };
 
 /** Raw pixels for embedding inside another SVG. Grid origin is (0,0); scale via the parent <g>. */
-export function LanternPixels({ lantern }: { lantern: Lantern }) {
+export function LanternPixels({ lantern, dark = false }: { lantern: Lantern; dark?: boolean }) {
+  const palette = dark ? DARK_PALETTE : PALETTE;
   const rects: { x: number; y: number; fill: string }[] = [];
   GRIDS[lantern].forEach((row, y) => {
     [...row].forEach((ch, x) => {
-      const fill = PALETTE[ch];
+      const fill = palette[ch];
       if (fill) rects.push({ x, y, fill });
     });
   });

@@ -70,7 +70,7 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
               className={id === myRoom ? "fill-lantern" : known ? "fill-hedge" : "fill-muted"} />
             {r.shrine && (
               <g transform={`translate(${x - roomWidth / 2 + 5} ${y + 4}) scale(1.5)`} aria-label={`${r.shrine} lantern shrine icon: ${LANTERN_ICON_LABEL[r.shrine]}`}>
-                <LanternPixels lantern={r.shrine} />
+                <LanternPixels lantern={r.shrine} dark={id === myRoom} />
               </g>
             )}
             <text x={x + (r.shrine ? 8 : 0)} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
