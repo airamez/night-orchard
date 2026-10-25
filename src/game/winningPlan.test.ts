@@ -14,6 +14,7 @@ describe("testing winning guide", () => {
       expect(plan.won).toBe(true);
       for (const step of plan.steps) {
         expect(step.round).toBeLessThanOrEqual(16);
+        expect(step.players.map((p) => p.id)).toEqual(state.players.map((p) => p.id));
         state.pending = Object.fromEntries(step.players.map((p) => [p.id, { action: p.action, locked: true }]));
         state = resolve(state);
       }
@@ -25,5 +26,12 @@ describe("testing winning guide", () => {
     const state = startGame(addPlayer(newLobby("p0", "Jose"), "p1", "Leila"));
     state.round = 16;
     expect(winningPlan(state).won).toBe(false);
+  });
+  it("keeps an already locked action when planning the current round", () => {
+    const state = startGame(addPlayer(newLobby("p0", "Jose"), "p1", "Leila"));
+    state.pending["p0"] = { action: { type: "wait" }, locked: true };
+    const plan = winningPlan(state);
+    expect(plan.steps[0]?.players.find((p) => p.id === "p0")?.action).toEqual({ type: "wait" });
+    expect(plan.won).toBe(true);
   });
 });

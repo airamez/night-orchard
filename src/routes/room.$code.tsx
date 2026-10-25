@@ -78,7 +78,7 @@ function RoomPage() {
   }
   if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} leave={leave} />;
   if (state.phase === "won" || state.phase === "lost") return <EndScreen state={state} me={me.seatId} send={send} leave={leave} />;
-  return <Game state={state} me={me.seatId} send={send} leave={leave} />;
+  return <Game code={code} state={state} me={me.seatId} send={send} leave={leave} />;
 }
 
 type Send = (body: RoomOp) => Promise<void>;
@@ -138,6 +138,7 @@ function Lobby({ code, state, me, send, leave }: { code: string; state: GameStat
           {state.players.length < 2 ? "Waiting for at least 2 players" : `Start with ${state.players.length} players`}
         </Button>
       ) : <p className="text-center text-muted-foreground">Waiting for the host to start…</p>}
+      {isHost && <GodModeButton code={code} />}
       <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
     </main>
   );
@@ -158,13 +159,18 @@ function describe(a: Action | undefined): string {
   }
 }
 
-function Game({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
-  const player = state.players.find((p) => p.id === me)!;
-  const room = ROOMS[player.room];
+function GodModeButton({ code }: { code: string }) {
+  return <Button asChild size="sm" variant="outline"><Link to="/room/$code/god-mode" params={{ code }} target="_blank" rel="noopener noreferrer">God mode — all players</Link></Button>;
+}
+
+function Game({ code, state, me, send, leave }: { code: string; state: GameState; me: string; send: Send; leave: () => void }) {
+  const player = state.players.find((p) => p.id === me);
   const mine = state.pending[me];
   const locked = !!mine?.locked;
   const [word, setWord] = useState("");
   const [restarting, setRestarting] = useState(false);
+  if (!player) return null;
+  const room = ROOMS[player.room];
   const isHost = state.hostId === me;
   const lockedCount = state.players.filter((p) => state.pending[p.id]?.locked).length;
   const occupants = state.players.filter((p) => p.room === player.room && p.id !== me);
@@ -195,6 +201,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Button asChild size="sm" variant="outline">
             <Link to="/how-to-play" target="_blank" rel="noopener noreferrer" aria-label="Instructions (opens in a new tab)">Instructions</Link>
           </Button>
+          {isHost && <GodModeButton code={code} />}
           {isHost && (
             <Button size="sm" variant="outline" disabled={restarting} onClick={async () => {
               if (!window.confirm("Restart the game for all players? Everyone returns to their starting room at round 1. Lanterns, the key, gate progress, chosen actions, and the Event log reset. Team chat and players stay.")) return;

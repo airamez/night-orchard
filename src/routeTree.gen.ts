@@ -14,6 +14,7 @@ import { Route as HowToPlayRouteImport } from './routes/how-to-play'
 import { Route as DemoDefeatRouteImport } from './routes/demo.defeat'
 import { Route as DemoVictoryRouteImport } from './routes/demo.victory'
 import { Route as RoomCodeRouteImport } from './routes/room.$code'
+import { Route as RoomCodeGodModeRouteImport } from './routes/room.$code_.god-mode'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const RoomCodeRoute = RoomCodeRouteImport.update({
   path: '/room/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomCodeGodModeRoute = RoomCodeGodModeRouteImport.update({
+  id: '/room/$code_/god-mode',
+  path: '/room/$code/god-mode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
   '/room/$code': typeof RoomCodeRoute
+  '/room/$code/god-mode': typeof RoomCodeGodModeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
   '/room/$code': typeof RoomCodeRoute
+  '/room/$code/god-mode': typeof RoomCodeGodModeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
   '/room/$code': typeof RoomCodeRoute
+  '/room/$code_/god-mode': typeof RoomCodeGodModeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/how-to-play' | '/demo/defeat' | '/demo/victory' | '/room/$code'
+    | '/'
+    | '/how-to-play'
+    | '/demo/defeat'
+    | '/demo/victory'
+    | '/room/$code'
+    | '/room/$code/god-mode'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/how-to-play' | '/demo/defeat' | '/demo/victory' | '/room/$code'
+  to:
+    | '/'
+    | '/how-to-play'
+    | '/demo/defeat'
+    | '/demo/victory'
+    | '/room/$code'
+    | '/room/$code/god-mode'
   id:
     | '__root__'
     | '/'
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | '/demo/defeat'
     | '/demo/victory'
     | '/room/$code'
+    | '/room/$code_/god-mode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   DemoDefeatRoute: typeof DemoDefeatRoute
   DemoVictoryRoute: typeof DemoVictoryRoute
   RoomCodeRoute: typeof RoomCodeRoute
+  RoomCodeGodModeRoute: typeof RoomCodeGodModeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/room/$code_/god-mode': {
+      id: '/room/$code_/god-mode'
+      path: '/room/$code/god-mode'
+      fullPath: '/room/$code/god-mode'
+      preLoaderRoute: typeof RoomCodeGodModeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoDefeatRoute: DemoDefeatRoute,
   DemoVictoryRoute: DemoVictoryRoute,
   RoomCodeRoute: RoomCodeRoute,
+  RoomCodeGodModeRoute: RoomCodeGodModeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

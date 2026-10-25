@@ -62,10 +62,10 @@ export function winningPlan(input: GameState): WinningPlan {
           else if (GK_PATH[(s.gkIndex + 1) % GK_PATH.length] === p.room) action = { type: "distract" };
         } else action = nextPreparation(s, p);
       }
-      actions[p.id] = action;
+      actions[p.id] = s.pending[p.id]?.locked ? s.pending[p.id]?.action ?? action : action;
     }
     const players = s.players.map((p) => ({ id: p.id, name: p.name, room: p.room, action: actions[p.id] ?? { type: "wait" } as Action }));
-    if (players.some((p) => !isLegal(s, s.players.find((x) => x.id === p.id) ?? s.players[0] as Player, p.action))) break;
+    if (s.players.some((p) => !isLegal(s, p, actions[p.id] ?? { type: "wait" }))) break;
     steps.push({ round: s.round, players });
     s.pending = Object.fromEntries(players.map((p) => [p.id, { action: p.action, locked: true }]));
     s = resolve(s);
