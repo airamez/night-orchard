@@ -23,7 +23,7 @@ function DemoVictory() {
     <EndScreen
       state={sampleEndState(true)}
       me="p1"
-      send={async () => toast.info("This is a preview — in a real game the host restarts from here.")}
+      send={async () => { toast.info("This is a preview — in a real game the host restarts from here."); }}
       leave={() => void navigate({ to: "/" })}
     />
   );
