@@ -1,4 +1,4 @@
-import { GK_PATH, LANTERNS, PASSWORD, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, type Dir, type Lantern, type RoomId } from "./map";
+import { GK_PATH, LANTERNS, PASSWORD_LINE, PASSWORD_PHRASES, PASSWORD_WORD_COUNT, ROOMS, ROUND_LIMIT, SHRINE_OF, START_ROOMS, passwordClue, type Dir, type Lantern, type RoomId } from "./map";
 
 export type ActionType = "wait" | "move" | "pickup" | "drop" | "usekey" | "hold" | "light" | "speak" | "distract";
 export interface Action { type: ActionType; dir?: Dir; text?: string }
@@ -22,6 +22,7 @@ export interface GameState {
   round: number;
   keyRoom: RoomId | null;
   doorUnlocked: boolean;
+  password: string;
   passwordSolved: boolean;
   gkIndex: number;
   visited: RoomId[];
@@ -34,7 +35,7 @@ export interface GameState {
 export function newLobby(hostId: string, hostName: string): GameState {
   return {
     phase: "lobby", hostId, players: [blankPlayer(hostId, hostName)], round: 0, keyRoom: "bell_lawn",
-    doorUnlocked: false, passwordSolved: false, gkIndex: 0, visited: [], firstVisitor: {}, pending: {}, log: [], chat: [],
+    doorUnlocked: false, password: "", passwordSolved: false, gkIndex: 0, visited: [], firstVisitor: {}, pending: {}, log: [], chat: [],
   };
 }
 
@@ -69,15 +70,23 @@ export function removePlayer(s: GameState, id: string): GameState {
   return next;
 }
 
+/** The Orchard clue is authored as PASSWORD_LINE; each game substitutes its own password. */
+function withPassword(line: string, password: string) {
+  return line === PASSWORD_LINE ? passwordClue(password) : line;
+}
+
 /** Share the room's authored information without revealing unexplored rooms. */
-function roomTip(r: number, roomId: RoomId, players: Player[]): GameState["log"][number] {
+function roomTip(r: number, roomId: RoomId, players: Player[], password: string): GameState["log"][number] {
   const room = ROOMS[roomId];
   const names = players.filter((p) => p.room === roomId).map((p) => p.name).join(", ");
-  return { r, roomId, text: `${room.title} — discovered by ${names}: ${room.prose.join(" ")}` };
+  return { r, roomId, text: `${room.title} — discovered by ${names}: ${room.prose.map((l) => withPassword(l, password)).join(" ")}` };
 }
 
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
 export function startGame(s: GameState): GameState {
+  const pool = [...PASSWORD_PHRASES];
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j]!, pool[i]!]; }
+  const password = pool.slice(0, Math.min(PASSWORD_WORD_COUNT, pool.length)).join(" ");
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
     room: START_ROOMS[i % 4]!,
@@ -87,10 +96,10 @@ export function startGame(s: GameState): GameState {
   const firstVisitor: GameState["firstVisitor"] = {};
   for (const p of players) firstVisitor[p.room] ??= p.name;
   return {
-    ...s, phase: "playing", players, round: 1, keyRoom: "bell_lawn", doorUnlocked: false, passwordSolved: false,
+    ...s, phase: "playing", players, round: 1, keyRoom: "bell_lawn", doorUnlocked: false, password, passwordSolved: false,
     gkIndex: 0, visited, firstVisitor, pending: {}, log: [
       { r: 1, text: "The gate locks behind you. The groundskeeper is in the Oak Shrine." },
-      ...visited.map((roomId) => roomTip(1, roomId, players)),
+      ...visited.map((roomId) => roomTip(1, roomId, players, password)),
     ],
   };
 }
@@ -164,7 +173,7 @@ export function resolve(prev: GameState): GameState {
   for (const p of s.players) {
     const a = acts.get(p.id)!;
     if (a.type === "speak" && p.room === "gate") {
-      if (normalizePassword(a.text ?? "") === PASSWORD) { if (!s.passwordSolved) log(`${p.name} speaks the password. The gate answers.`); s.passwordSolved = true; }
+      if (normalizePassword(a.text ?? "") === (s.password || PASSWORD_PHRASES[0]!)) { if (!s.passwordSolved) log(`${p.name} speaks the password. The gate answers.`); s.passwordSolved = true; }
       else log(`${p.name} speaks a word. The gate stays silent.`);
     }
   }
@@ -193,7 +202,7 @@ export function resolve(prev: GameState): GameState {
     else if (p.outAt !== null) p.outAt = null;
   }
   // Share each newly explored room once, after all simultaneous arrivals are known.
-  for (const roomId of discovered) s.log.push(roomTip(r, roomId, s.players));
+  for (const roomId of discovered) s.log.push(roomTip(r, roomId, s.players, s.password || PASSWORD_PHRASES[0]!));
   // 8. Groundskeeper.
   s.gkIndex = (s.gkIndex + 1) % GK_PATH.length;
   const gk = gkRoom(s);

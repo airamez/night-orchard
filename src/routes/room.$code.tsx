@@ -8,7 +8,7 @@ import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
-import { GK_PATH, NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
+import { GK_PATH, NAME_MAX, PASSWORD_LINE, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, passwordClue, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
 import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
@@ -223,7 +223,7 @@ function Game({ code, state, me, send, leave }: { code: string; state: GameState
               {room.prose.map((line, i) => (
                 <li key={i} className={i > 0 && room.prose[i - 1]?.endsWith(":") ? "ml-4 list-[circle]" : undefined}>
                   {room.shrine && line === `${room.shrine} lanterns wake here.` && <LanternIcon lantern={room.shrine} size={16} className="mr-1.5" />}
-                  {line}
+                  {room.id === "orchard" && line === PASSWORD_LINE ? passwordClue(state.password || PASSWORD_PHRASES[0]!) : line}
                 </li>
               ))}
 

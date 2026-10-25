@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { addPlayer, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
+import { PASSWORD_PHRASES, PASSWORD_WORD_COUNT, passwordClue } from "./map";
 
 function game(n = 2): GameState {
   let s = newLobby("p0", "P0");
@@ -78,14 +79,51 @@ describe("Night Orchard rules", () => {
 
   it("gate needs the password and a lit lantern", () => {
     let s = game(2);
+    s.password = "nightbloom moonvine";
     s.players[0]!.room = "gate";
-    s = resolve(act(s, { p0: { type: "speak", text: "  NightBloom " } }));
+    s = resolve(act(s, { p0: { type: "speak", text: "  NightBloom  MoonVine " } }));
     expect(s.passwordSolved).toBe(true);
     s = resolve(act(s, { p0: { type: "move", dir: "north" } }));
     expect(s.players[0]!.room).toBe("gate");
     s.players[0]!.lit = true;
     s = resolve(act(s, { p0: { type: "move", dir: "north" } }));
     expect(s.players[0]!.room).toBe("outer_lawn");
+  });
+
+  it("every game draws its password words from the phrase list", () => {
+    const s = game(3);
+    const words = s.password.split(" ");
+    expect(words).toHaveLength(PASSWORD_WORD_COUNT);
+    expect(words.every((w) => PASSWORD_PHRASES.includes(w))).toBe(true);
+    expect(new Set(words).size).toBe(words.length);
+  });
+
+  it("restart draws a fresh password from the list and the gate accepts it", () => {
+    let s = startGame(game(2));
+    expect(s.password.split(" ").every((w) => PASSWORD_PHRASES.includes(w))).toBe(true);
+    s.players[0]!.room = "gate";
+    s = resolve(act(s, { p0: { type: "speak", text: s.password.toUpperCase() } }));
+    expect(s.passwordSolved).toBe(true);
+  });
+
+  it("the password words must be spoken in the carved order", () => {
+    let s = game(2);
+    s.password = "night moon rose dusk";
+    s.players[0]!.room = "gate";
+    s = resolve(act(s, { p0: { type: "speak", text: "dusk rose moon night" } }));
+    expect(s.passwordSolved).toBe(false);
+    s = resolve(act(s, { p0: { type: "speak", text: "night moon rose dusk" } }));
+    expect(s.passwordSolved).toBe(true);
+  });
+
+  it("the orchard clue shows every password word in order", () => {
+    expect(passwordClue("night moon rose dusk"))
+      .toBe("The night flowers are called NIGHT, MOON, ROSE and DUSK — speak them at the Gate, in this order.");
+  });
+
+  it("the phrase list offers many unique lowercase words", () => {
+    expect(new Set(PASSWORD_PHRASES).size).toBeGreaterThan(50);
+    expect(PASSWORD_PHRASES.every((p) => /^[a-z]{1,8}$/.test(p))).toBe(true);
   });
 
   it("earlier seat gets the key when two take it", () => {

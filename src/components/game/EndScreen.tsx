@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { GameState } from "@/game/engine";
-import { ROOMS, ROUND_LIMIT } from "@/game/map";
+import { PASSWORD_PHRASES, ROOMS, ROUND_LIMIT } from "@/game/map";
 
 interface EndScreenProps {
   state: GameState;
@@ -17,7 +17,7 @@ export function EndScreen({ state, me, send, leave }: EndScreenProps) {
   const last = inside.length ? inside : [...state.players].sort((a, b) => (b.outAt ?? 0) - (a.outAt ?? 0)).slice(0, 1);
   const clues = [
     state.firstVisitor.fountain && `The key is under the bell — read in Fountain Court by ${state.firstVisitor.fountain}.`,
-    state.firstVisitor.orchard && `The password NIGHTBLOOM — carved in the Orchard, found by ${state.firstVisitor.orchard}.`,
+    state.firstVisitor.orchard && `The password ${(state.password || PASSWORD_PHRASES[0]!).toUpperCase()} — carved in the Orchard, found by ${state.firstVisitor.orchard}.`,
     state.firstVisitor.hedge_knot && `The hedge opens while someone holds — read at the Hedge Knot by ${state.firstVisitor.hedge_knot}.`,
   ].filter(Boolean);
 

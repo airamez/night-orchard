@@ -1,21 +1,6 @@
-- [x] Add an Instructions button during gameplay that opens a separate tab.
-- [x] Show the full map in instructions and explain the fixed layout.
-- [x] Verify instructions open without replacing an active game.
-- [x] Enlarge maps and add a full-map dialog with live player positions.
-- [x] Verify the map dialog during a real game and on a narrow screen.
-- [x] Replace room circles with compact headers and occupant-sized player boxes.
-- [x] Verify empty and occupied room boxes in the guide and live full map.
-- [x] Automatically share starting and newly discovered room tips in the Event log without repeats.
-- [x] Verify shared tips in a real multiplayer round and update the guide.
-- [x] Move the Event log into the right column beside the Team chat so no panel spans the full width.
-- [x] Add and verify an owner-only restart button during play that resets the shared game after confirmation.
-- [x] Add retro pixel icons for each lantern/shrine pair in map room headers and beside the "wakes at" text.
-- [x] Redraw the bell as a recognizable bell and keep every icon readable on the lit (yellow) room header.
-- [x] Give every icon one fixed color set on its own plate so it reads on any room-box header.
-- [x] Left-align each player's lantern icon and name against the left edge of the room box.
-- [x] Show the shrine icon beside the "… lanterns wake here." line in the room info panel.
-- [x] Add a /room/CODE/god-mode testing view with an owner-only new-tab winning guide.
-- [x] Show one concrete action for every player in every round, with live progress for solo team testing.
-- [x] Verify the winning steps against real game rules and the owner/guest views.
+# Roadmap
 
-
+- [x] Draw each game's gate password from a word list instead of the fixed "nightbloom".
+- [x] Fold in follow-up: password is x words chosen from the list per game.
+- [x] Expand to 100 themed words, 4 words per game, update guide and tests.
+- [x] Verify build, tests, and the live two-player flow after the multi-word password change.

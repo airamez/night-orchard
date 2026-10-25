@@ -54,7 +54,7 @@ function HowToPlay() {
         <p>To pass the Gate, a player needs two things:</p>
         <ul className="list-disc space-y-1 pl-6">
           <li>A <b>lit lantern</b> — each player lights their own, and only at one specific room.</li>
-          <li>The <b>password</b> — one player must speak the right word at the Gate. It is carved somewhere in the maze.</li>
+          <li>The <b>password</b> — one player must speak the right word at the Gate. It is carved somewhere in the maze, and it is <b>different in every game</b>.</li>
         </ul>
       </Section>
 
@@ -124,7 +124,7 @@ function HowToPlay() {
           <li><b>Pick up / Drop the iron key</b> — the key opens one locked door. Only one player can carry it. If two players try to pick it up in the same round, the one who joined the room earlier gets it.</li>
           <li><b>Use the iron key</b> — unlocks the heavy east door of the Glass House. The key is used up.</li>
           <li><b>Light your lantern</b> — only works at your lantern's shrine. Your room text tells you which shrine wakes your lantern.</li>
-          <li><b>Speak</b> — at the Gate, say a word. The right word opens the way for the whole team, permanently.</li>
+          <li><b>Speak</b> — at the Gate, say the password. It is four night-flower words, spoken in the order carved in the Orchard; getting it right once opens the way for the whole team, permanently.</li>
           <li><b>Hold</b> — at the Sun Stone or the Rose Walk, holding keeps the woven hedge open for that round so others can pass through it.</li>
           <li><b>Distract the groundskeeper</b> — spend your round keeping him busy (see below).</li>
           <li><b>Wait</b> — do nothing. Sometimes the right move is no move.</li>
@@ -208,7 +208,7 @@ function HowToPlay() {
         <ol className="list-decimal space-y-2 pl-6">
           <li><b>Read the shared room tips in the Event log.</b> Starting rooms and newly explored rooms appear automatically. Use chat to agree on a plan.</li>
           <li><b>Find the iron key</b> (a clue tells you where) and carry it to the Glass House to unlock the east door.</li>
-          <li><b>Find the password</b> — it is carved in the Orchard, past that locked door. Someone must speak it at the Gate.</li>
+          <li><b>Find the password</b> — it is carved in the Orchard, past that locked door, and it is different in every game. Someone must speak it at the Gate.</li>
           <li><b>Light every lantern.</b> Each player must reach their own shrine. Watch the groundskeeper's patrol so you don't get delayed on the way.</li>
           <li><b>Coordinate the hedge.</b> Players heading north through the Rose Walk need a holder on the Sun Stone or the Rose Walk that round.</li>
           <li><b>Everyone walks out the Gate</b> onto the Outer Lawn — with a lit lantern — before round {ROUND_LIMIT} ends.</li>

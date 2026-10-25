@@ -1,5 +1,5 @@
 import { isLegal, resolve, startGame, type Action, type GameState, type Player } from "./engine";
-import { GK_PATH, PASSWORD, ROOMS, ROUND_LIMIT, SHRINE_OF, type RoomId } from "./map";
+import { GK_PATH, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, type RoomId } from "./map";
 
 export interface WinningStep { round: number; players: { id: string; name: string; room: RoomId; action: Action }[] }
 export interface WinningPlan { steps: WinningStep[]; won: boolean }
@@ -53,7 +53,7 @@ export function winningPlan(input: GameState): WinningPlan {
       let action: Action = { type: "wait" };
       if (!p.delayed && p.room !== "outer_lawn") {
         if (!p.lit) action = nextPreparation(s, p);
-        else if (p.room === "gate") action = s.passwordSolved ? { type: "move", dir: "north" } : { type: "speak", text: PASSWORD.toUpperCase() };
+        else if (p.room === "gate") action = s.passwordSolved ? { type: "move", dir: "north" } : { type: "speak", text: (s.password || PASSWORD_PHRASES[0]!).toUpperCase() };
         else if (p.room === "rose_walk") action = behind.length && p.id === roseHolder?.id ? { type: "hold" } : { type: "move", dir: "north" };
         else if (p.room === "sun_stone") action = roseHolder ? { type: "move", dir: "east" } : { type: "hold" };
         else if (p.room === "hedge_knot") {
