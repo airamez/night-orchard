@@ -32,7 +32,7 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
     const [x, y] = position(id);
     return { x, y, bottom: y + Math.max(12, state.players.filter((player) => player.room === id).length * 20 + 10) };
   });
-  const left = Math.min(0, ...points.map((point) => point.x)) - 110;
+  const left = (points.length ? Math.min(...points.map((point) => point.x)) : 0) - 110;
   const right = Math.max(0, ...points.map((point) => point.x)) + 110;
   const top = Math.min(...points.map((point) => point.y), 0);
   const visibleTop = points.length ? Math.min(...points.map((point) => point.y)) - 38 : top - 38;
