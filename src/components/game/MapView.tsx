@@ -7,7 +7,7 @@ import { ROOMS } from "@/game/map";
 
 type MapState = Pick<GameState, "visited" | "players" | "doorUnlocked">;
 
-function Positions({ state, me }: { state: MapState; me?: string }) {
+function Positions({ state, me }: { state: MapState; me?: string | undefined }) {
   if (!state.players.length) return null;
   return <ul aria-label="Player positions" className="grid gap-x-6 gap-y-2 border-t border-border pt-3 text-sm sm:grid-cols-2">
     {state.players.map((player, index) => <li key={player.id} className="flex items-start gap-2">
@@ -27,7 +27,7 @@ export function MapView({ state, me, full = false }: { state: MapState; me?: str
       <div className="overflow-x-auto"><MazeMap state={state} me={me} full={full} /></div>
       <Positions state={state} me={me} />
       <DialogContent aria-describedby={undefined} className="max-h-[92dvh] w-[calc(100%_-_2rem)] max-w-5xl overflow-y-auto p-4 sm:p-6">
-        <DialogHeader><DialogTitle className="font-serif text-2xl">Night Orchard — full map</DialogTitle></DialogHeader>
+        <DialogHeader className="pr-8 text-left"><DialogTitle className="font-serif text-2xl">Night Orchard — full map</DialogTitle></DialogHeader>
         <div className="overflow-x-auto"><MazeMap state={state} me={me} full label="Entire Night Orchard maze and current player positions" /></div>
         <Positions state={state} me={me} />
       </DialogContent>

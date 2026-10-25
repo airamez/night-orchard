@@ -1,7 +1,7 @@
 import { ROOMS, type RoomId } from "@/game/map";
 import type { GameState } from "@/game/engine";
 
-export function MazeMap({ state, me, full = false, label = "Map of explored rooms" }: { state: Pick<GameState, "visited" | "players" | "doorUnlocked">; me?: string; full?: boolean; label?: string }) {
+export function MazeMap({ state, me, full = false, label = "Map of explored rooms" }: { state: Pick<GameState, "visited" | "players" | "doorUnlocked">; me?: string | undefined; full?: boolean; label?: string }) {
   const visited = new Set(full ? Object.values(ROOMS).map((room) => room.id) : state.visited);
   const myRoom = state.players.find((p) => p.id === me)?.room;
   const edges: { a: RoomId; b: RoomId; hedge: boolean; locked: boolean }[] = [];
