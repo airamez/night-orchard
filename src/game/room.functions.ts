@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { addPlayer, allLocked, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
+import { NAME_MAX } from "./map";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const randomCode = () => Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join("");
@@ -39,7 +40,7 @@ async function maybeResolve(db: Db, code: string, state: GameState, round: numbe
 }
 
 export const createRoom = createServerFn({ method: "POST" })
-  .validator((d) => z.object({ name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ name: z.string().trim().min(1).max(NAME_MAX) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const seatId = crypto.randomUUID();
