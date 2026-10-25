@@ -11,7 +11,7 @@ export interface WinningPlan {
 export interface PlanOptions { /** Plan as if nobody had locked an action yet this round. */ ignoreLocks?: boolean }
 
 /** Joint-action resolutions the exact search may spend before falling back to the rule-based plan. */
-export const SEARCH_BUDGET = { value: 40000 };
+const SEARCH_BUDGET = 40000;
 const SKIP_ROOMS: RoomId[] = ["ivy_wall", "glass_house", "orchard"];
 
 const BEYOND: RoomId[] = ["rose_walk", "gate"];
@@ -61,10 +61,13 @@ export function winningPlan(input: GameState, opts: PlanOptions = {}): WinningPl
   const start = input.phase === "lobby" ? startGame(input) : structuredClone(input);
   if (opts.ignoreLocks) start.pending = {};
   if (start.players.length < 2 || start.phase !== "playing") return { steps: [], won: start.phase === "won", impossible: false };
+  // The rule-based plan is fast and optimal from a fresh start; only search exhaustively
+  // when it fails, to either rescue the position or prove dawn can no longer be beaten.
+  const rules = rulePlan(start);
+  if (rules.won) return rules;
   const exact = searchPlan(start);
-  if (exact === "impossible") return { ...rulePlan(start), impossible: true };
-  if (exact) return exact;
-  return rulePlan(start);
+  if (exact === "impossible") return { ...rules, impossible: true };
+  return exact ?? rules;
 }
 
 /** Candidate actions for one player; pointless detours (dead ends, key chores) are skipped. */
@@ -108,7 +111,7 @@ function searchPlan(start: GameState): WinningPlan | "impossible" | null {
     const node = nodes[i]!;
     const lists = node.s.players.map((p) => candidates(node.s, p, i === 0));
     const combos = lists.reduce((n, l) => n * l.length, 1);
-    if (spent + combos > SEARCH_BUDGET.value) return null;
+    if (spent + combos > SEARCH_BUDGET) return null;
     spent += combos;
     const pick = new Array<number>(lists.length).fill(0);
     for (let c = 0; c < combos; c++) {
@@ -223,4 +226,26 @@ export function winningAction(action: Action, room: RoomId): string {
   if (action.type === "hold") return "Hold — keep the hedge open";
   if (action.type === "distract") return "Distract the groundskeeper";
   return "Wait";
+}
+
+export interface LockWarning { id: string; name: string; locked: Action; suggested: Action; room: RoomId }
+
+/**
+ * Locked actions this round that make the team slower or lose the escape, compared with
+ * the best plan if nobody had locked yet. Equivalent alternatives are not flagged.
+ */
+export function lockWarnings(state: GameState, plan: WinningPlan): LockWarning[] {
+  if (state.phase !== "playing" || !Object.values(state.pending).some((p) => p.locked)) return [];
+  const free = winningPlan(state, { ignoreLocks: true });
+  const worse = free.won && (!plan.won || plan.steps.length > free.steps.length);
+  if (!worse) return [];
+  const first = free.steps[0];
+  if (!first) return [];
+  return state.players.flatMap((p) => {
+    const locked = state.pending[p.id]?.locked ? state.pending[p.id]!.action : undefined;
+    const suggested = first.players.find((x) => x.id === p.id)?.action;
+    if (!locked || !suggested || p.delayed) return [];
+    if (locked.type === suggested.type && locked.dir === suggested.dir) return [];
+    return [{ id: p.id, name: p.name, locked, suggested, room: p.room }];
+  });
 }
