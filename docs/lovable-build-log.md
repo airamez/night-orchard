@@ -660,3 +660,9 @@ The God mode button no longer appears on a normal room link. It now shows (for t
 > I had a two players game and use the god-mode and followed the instructions but got this: Winning steps for every player … No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan.
 
 Replayed the room (T3CA) from the saved state. At round 11 the escape was genuinely impossible: the fastest two-player escape takes 13 rounds, leaving only 3 spare, and the log showed two rounds where a player stayed put instead of following the guide (round 7 and round 10 — most likely "Lock action" pressed without clicking a choice, which locks Wait) plus a groundskeeper delay. God mode now: (1) checks every possible move sequence when its normal plan fails, so it either finds a rescue or says plainly that dawn can no longer be beaten; (2) shows how many spare rounds the plan has; (3) warns, the moment a player locks an off-plan action that slows or loses the escape, who it was and what to choose instead. Added three tests (40 game tests pass) and checked the T3CA guide in the browser.
+
+## Session: "no winning plan" again — published site was out of date (2026-10-25)
+
+> Samething happened in a game with two players: … No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan.
+
+That exact wording only exists in the older version still running on the published site; the improved guide had not been published yet. Replaying the live room (T3CA, round 10) through the current planner showed the game was still winnable — Master had locked "Wait" at the Hedge Knot instead of "Go north to Rose Walk"; the new guide flags this with a warning and a 6-round winning plan. Fixed the root cause too: "Lock action" is now disabled (labelled "Choose an action first") until the player picks an action, so nobody can accidentally lock Wait.
