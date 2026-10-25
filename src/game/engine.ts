@@ -84,6 +84,7 @@ function roomTip(r: number, roomId: RoomId, players: Player[], password: string)
 
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
 export function startGame(s: GameState): GameState {
+  const password = PASSWORD_PHRASES[Math.floor(Math.random() * PASSWORD_PHRASES.length)]!;
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
     room: START_ROOMS[i % 4]!,
@@ -93,10 +94,10 @@ export function startGame(s: GameState): GameState {
   const firstVisitor: GameState["firstVisitor"] = {};
   for (const p of players) firstVisitor[p.room] ??= p.name;
   return {
-    ...s, phase: "playing", players, round: 1, keyRoom: "bell_lawn", doorUnlocked: false, passwordSolved: false,
+    ...s, phase: "playing", players, round: 1, keyRoom: "bell_lawn", doorUnlocked: false, password, passwordSolved: false,
     gkIndex: 0, visited, firstVisitor, pending: {}, log: [
       { r: 1, text: "The gate locks behind you. The groundskeeper is in the Oak Shrine." },
-      ...visited.map((roomId) => roomTip(1, roomId, players)),
+      ...visited.map((roomId) => roomTip(1, roomId, players, password)),
     ],
   };
 }
@@ -170,7 +171,7 @@ export function resolve(prev: GameState): GameState {
   for (const p of s.players) {
     const a = acts.get(p.id)!;
     if (a.type === "speak" && p.room === "gate") {
-      if (normalizePassword(a.text ?? "") === PASSWORD) { if (!s.passwordSolved) log(`${p.name} speaks the password. The gate answers.`); s.passwordSolved = true; }
+      if (normalizePassword(a.text ?? "") === (s.password || PASSWORD_PHRASES[0]!)) { if (!s.passwordSolved) log(`${p.name} speaks the password. The gate answers.`); s.passwordSolved = true; }
       else log(`${p.name} speaks a word. The gate stays silent.`);
     }
   }
