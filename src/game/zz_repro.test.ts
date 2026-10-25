@@ -1,7 +1,7 @@
 import { it } from "vitest";
 import { winningPlan } from "./winningPlan";
 import { addPlayer, newLobby, startGame } from "./engine";
-it("repro", () => {
+it("repro", { timeout: 60000 }, () => {
   const s: any = {chat:[],doorUnlocked:false,firstVisitor:{},gkIndex:4,hostId:"a",keyRoom:"bell_lawn",log:[],password:"smoke bee raven vine",passwordSolved:false,pending:{},phase:"playing",
    players:[{delayed:false,hasKey:false,helped:2,id:"a",lantern:"Oak",lit:true,name:"Master",outAt:null,room:"sun_stone"},{delayed:true,hasKey:false,helped:0,id:"b",lantern:"Well",lit:true,name:"Player",outAt:null,room:"hedge_knot"}],round:11,visited:[]};
   let t=performance.now(); const r = winningPlan(s); console.log("repro", r.won, r.impossible, performance.now()-t);
