@@ -88,7 +88,8 @@ export function LanternPixels({ lantern }: { lantern: Lantern }) {
   const rects: { x: number; y: number; fill: string }[] = [];
   GRIDS[lantern].forEach((row, y) => {
     [...row].forEach((ch, x) => {
-      if (ch !== ".") rects.push({ x, y, fill: PALETTE[ch] });
+      const fill = PALETTE[ch];
+      if (fill) rects.push({ x, y, fill });
     });
   });
   return (
