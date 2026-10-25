@@ -87,7 +87,7 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
                   <g transform={`translate(${startX} ${rowY - icon / 2}) scale(${icon / 12})`} aria-label={`${p.lantern} lantern icon: ${LANTERN_ICON_LABEL[p.lantern]}`}>
                     <LanternPixels lantern={p.lantern} />
                   </g>
-                  <text x={startX + icon + gap} y={rowY} dominantBaseline="middle" textAnchor="start" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[12px] font-sans font-bold`}>{p.name}</text>
+                  <text x={startX + icon + gap} y={rowY} dominantBaseline="middle" textAnchor="start" textLength={est} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[12px] font-sans font-bold`}>{p.name}</text>
                 </g>
               );
             })}
