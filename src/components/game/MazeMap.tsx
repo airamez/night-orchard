@@ -1,5 +1,6 @@
 import { ROOMS, type RoomId } from "@/game/map";
 import type { GameState } from "@/game/engine";
+import { LanternPixels, LANTERN_ICON_LABEL } from "@/components/game/LanternIcon";
 
 export function MazeMap({ state, me, full = false, label = "Map of explored rooms" }: { state: Pick<GameState, "visited" | "players" | "doorUnlocked">; me?: string | undefined; full?: boolean; label?: string }) {
   const visited = new Set(full ? Object.values(ROOMS).map((room) => room.id) : state.visited);
@@ -67,7 +68,12 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
               strokeWidth={id === myRoom ? 2 : 1} className={`fill-card ${id === myRoom ? "stroke-lantern" : known ? "stroke-border" : "stroke-muted-foreground/30"}`} />
             <path d={`M ${x - roomWidth / 2 + 6} ${y} H ${x + roomWidth / 2 - 6} Q ${x + roomWidth / 2} ${y} ${x + roomWidth / 2} ${y + 6} V ${y + headerHeight} H ${x - roomWidth / 2} V ${y + 6} Q ${x - roomWidth / 2} ${y} ${x - roomWidth / 2 + 6} ${y} Z`}
               className={id === myRoom ? "fill-lantern" : known ? "fill-hedge" : "fill-muted"} />
-            <text x={x} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
+            {r.shrine && (
+              <g transform={`translate(${x - roomWidth / 2 + 5} ${y + 4}) scale(1.5)`} aria-label={`${r.shrine} lantern shrine icon: ${LANTERN_ICON_LABEL[r.shrine]}`}>
+                <LanternPixels lantern={r.shrine} />
+              </g>
+            )}
+            <text x={x + (r.shrine ? 8 : 0)} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
               className={`${id === myRoom ? "fill-ink" : known ? "fill-parchment" : "fill-muted-foreground"} text-[13px] font-sans font-bold ${known ? "" : "opacity-70"}`}>{r.title}</text>
             {here.map((p, index) => (
               <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title}`}>
