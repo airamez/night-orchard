@@ -33,7 +33,13 @@ function RoomPage() {
   const [seat, setSeat] = useState<Seat | null>(null);
   const [seatLoaded, setSeatLoaded] = useState(false);
   const [removed, setRemoved] = useState(false);
-  useEffect(() => { setSeat(loadSeat(code)); setSeatLoaded(true); }, [code]);
+  // God mode stays hidden unless the owner opened the room with a ?god-mode suffix.
+  const [godModeUrl, setGodModeUrl] = useState(false);
+  useEffect(() => {
+    setSeat(loadSeat(code));
+    setSeatLoaded(true);
+    setGodModeUrl(new URLSearchParams(window.location.search).has("god-mode"));
+  }, [code]);
 
   const inRoom = !!seat && !!state?.players.some((p) => p.id === seat.seatId);
   // If we had a seat but are no longer in the player list, we left or were removed.
