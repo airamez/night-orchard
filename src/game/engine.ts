@@ -27,7 +27,7 @@ export interface GameState {
   visited: RoomId[];
   firstVisitor: Partial<Record<RoomId, string>>;
   pending: Record<string, { action: Action; locked: boolean }>;
-  log: { r: number; text: string }[];
+  log: { r: number; text: string; roomId?: RoomId }[];
   chat: { name: string; text: string; t: number }[];
 }
 
@@ -70,6 +70,12 @@ export function removePlayer(s: GameState, id: string): GameState {
 }
 
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
+function roomTip(r: number, roomId: RoomId, players: Player[]): GameState["log"][number] {
+  const room = ROOMS[roomId];
+  const names = players.filter((p) => p.room === roomId).map((p) => p.name).join(", ");
+  return { r, roomId, text: `${names} discovers ${room.title}: ${room.prose.join(" ")}` };
+}
+
 export function startGame(s: GameState): GameState {
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
@@ -81,7 +87,10 @@ export function startGame(s: GameState): GameState {
   for (const p of players) firstVisitor[p.room] ??= p.name;
   return {
     ...s, phase: "playing", players, round: 1, keyRoom: "bell_lawn", doorUnlocked: false, passwordSolved: false,
-    gkIndex: 0, visited, firstVisitor, pending: {}, log: [{ r: 1, text: "The gate locks behind you. The groundskeeper is in the Oak Shrine." }],
+    gkIndex: 0, visited, firstVisitor, pending: {}, log: [
+      { r: 1, text: "The gate locks behind you. The groundskeeper is in the Oak Shrine." },
+      ...visited.map((roomId) => roomTip(1, roomId, players)),
+    ],
   };
 }
 
@@ -171,14 +180,17 @@ export function resolve(prev: GameState): GameState {
     }
     dests.set(p.id, to);
   }
+  const discovered: RoomId[] = [];
   for (const p of s.players) {
     const to = dests.get(p.id);
     if (!to) continue;
     p.room = to;
-    if (!s.visited.includes(to)) { s.visited.push(to); s.firstVisitor[to] = p.name; }
+    if (!s.visited.includes(to)) { s.visited.push(to); s.firstVisitor[to] = p.name; discovered.push(to); }
     if (to === "outer_lawn") { p.outAt = r; log(`${p.name} steps onto the Outer Lawn.`); }
     else if (p.outAt !== null) p.outAt = null;
   }
+  // Share each newly explored room once, after all simultaneous arrivals are known.
+  for (const roomId of discovered) s.log.push(roomTip(r, roomId, s.players));
   // 8. Groundskeeper.
   s.gkIndex = (s.gkIndex + 1) % GK_PATH.length;
   const gk = gkRoom(s);

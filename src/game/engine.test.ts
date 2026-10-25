@@ -15,6 +15,36 @@ describe("Night Orchard rules", () => {
     expect(s.players.map((p) => p.lantern)).toEqual(["Oak", "Well", "Bell", "Moon", "Oak"]);
   });
 
+  it("shares all starting room tips once for the team without posting to chat", () => {
+    const s = game(5);
+    expect(s.log.filter((entry) => entry.roomId).map((entry) => entry.roomId))
+      .toEqual(["fountain", "bell_lawn", "well", "hedge_knot"]);
+    expect(s.log.filter((entry) => entry.roomId).every((entry) => entry.r === 1)).toBe(true);
+    expect(s.chat).toEqual([]);
+  });
+
+  it("shares newly reached room tips in the resolved round without revealing unvisited rooms", () => {
+    const s = resolve(act(game(), { p0: { type: "move", dir: "north" } }));
+    expect(s.log.filter((entry) => entry.roomId).map((entry) => [entry.roomId, entry.r]))
+      .toEqual([["fountain", 1], ["bell_lawn", 1], ["hedge_knot", 1]]);
+    expect(s.chat).toEqual([]);
+  });
+
+  it("does not repeat room tips for simultaneous arrivals, waiting, or revisits", () => {
+    let s = resolve(act(game(), { p0: { type: "move", dir: "north" }, p1: { type: "move", dir: "west" } }));
+    s = resolve(act(s, {}));
+    s = resolve(act(s, { p0: { type: "move", dir: "south" } }));
+    s = resolve(act(s, { p0: { type: "move", dir: "north" } }));
+    expect(s.log.filter((entry) => entry.roomId === "hedge_knot")).toHaveLength(1);
+    expect(s.log.filter((entry) => entry.roomId === "fountain")).toHaveLength(1);
+  });
+
+  it("reshare starting tips on restart with no old discoveries", () => {
+    const s = startGame(resolve(act(game(), { p0: { type: "move", dir: "north" } })));
+    expect(s.log.filter((entry) => entry.roomId).map((entry) => entry.roomId))
+      .toEqual(["fountain", "bell_lawn"]);
+  });
+
   it("hedge stays shut without a holder and opens with one", () => {
     let s = game(4);
     s = resolve(act(s, { p3: { type: "move", dir: "north" } }));
