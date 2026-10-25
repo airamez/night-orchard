@@ -75,12 +75,21 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
             )}
             <text x={x + (r.shrine ? 8 : 0)} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
               className={`${id === myRoom ? "fill-ink" : known ? "fill-parchment" : "fill-muted-foreground"} text-[13px] font-sans font-bold ${known ? "" : "opacity-70"}`}>{r.title}</text>
-            {here.map((p, index) => (
-              <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title}`}>
-                <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title}</title>
-                <text x={x} y={y + headerHeight + 5 + playerLineHeight * (index + 0.5)} dominantBaseline="middle" textAnchor="middle" textLength={p.name.length > 18 ? roomWidth - 20 : undefined} lengthAdjust="spacingAndGlyphs" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[12px] font-sans font-bold`}>{p.name}</text>
-              </g>
-            ))}
+            {here.map((p, index) => {
+              const rowY = y + headerHeight + 5 + playerLineHeight * (index + 0.5);
+              const icon = 11;
+              const gap = 5;
+              const startX = x - (icon + gap + p.name.length * 6.9) / 2;
+              return (
+                <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title} with the ${p.lantern} lantern`}>
+                  <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title} · {p.lantern} lantern</title>
+                  <g transform={`translate(${startX} ${rowY - icon / 2}) scale(${icon / 12})`} aria-label={`${p.lantern} lantern icon: ${LANTERN_ICON_LABEL[p.lantern]}`}>
+                    <LanternPixels lantern={p.lantern} />
+                  </g>
+                  <text x={startX + icon + gap} y={rowY} dominantBaseline="middle" textAnchor="start" className={`${p.id === me ? "fill-lantern" : "fill-parchment"} text-[12px] font-sans font-bold`}>{p.name}</text>
+                </g>
+              );
+            })}
           </g>
         );
       })}
