@@ -714,3 +714,18 @@ Completed `/dashboard`. Browser checks confirmed new games, unique player-seat c
 **Assistant:** No—the dashboard checks passed; I’m finishing the chat log now, then I’ll summarize what’s ready.
 
 **Completion reply:** Dashboard completed and tested at `/dashboard`; publishing is still needed, and real-player location capture remains unverified.
+
+## Session: repair player locations and add feedback (2026-10-25)
+
+> the new dashboard is already showing a lot of data and I started a new game with two players and no geo location data saved. check why it is not working.
+> Add a button to Report Bugs or Suggestion and show a single form to read the title and the description, mas 255 charactes and send an email to night.orchard@airamez.com
+
+**Assistant progress:** I’ll check why locations stay empty and add the report form. Automatic email sending needs your sender domain configured.
+
+**Findings and changes:** There were 21 saved captures, all with null country. The previous code saved failed/missing-header lookups as permanent unknown rows and never retried them. The provider works with a public test address; missing hosting headers remain the likely initial cause, not conclusively verified in production. Unknown captures now retry, failed lookups no longer persist an unknown row, and a browser fallback requests only city/region/country from the provider and submits strictly validated location fields to the seat-verified server function. No player address is persisted or logged. A real two-player browser game captured locations and read them back in the dashboard. Historical/test games explain the pre-existing totals; historical locations cannot be reconstructed without those players revisiting their seats.
+
+**Assistant progress:** Failed lookups were saved as permanent unknowns. I’ll allow retries and add a fallback when location headers are unavailable.
+
+Added a shared Report Bugs or Suggestion button with title and description, each capped at 255 characters. It currently prepares an email draft to night.orchard@airamez.com and clearly says the user must send it in their email app. Automatic app email is not enabled: no sender domain is configured, so the email setup action is offered before scaffolding or wiring managed sending. Twelve focused tests passed; build log reports build OK; browser verified the form and two-player dashboard location readback.
+
+**Completion:** Location capture now works in the tested two-player flow; publish to update the live game. The report form is available as an email draft; configure a sender domain to finish automatic email sending.
