@@ -616,3 +616,35 @@ Everything the chat describes is in this repository:
 - `src/components/game/` — `MazeMap`, `MapView`, `LanternIcon`, `EndScreen`
 - `src/game/*.test.ts` — the game-rule tests (19 of them)
 - `AGENTS.md` — the architecture notes kept up to date as the game grew
+
+---
+
+## Session: per-game passwords and god-mode fixes (2026-10-25)
+
+> OK, I connected to a github repo, I need you now to improve the readme.md file, adding a short oveerview about the game and adding a url for: https://night-orchard.lovable.app/how-to-play
+
+Rewrote `README.md` with a game overview, the how-to-play URL, rules, multiplayer and solo-testing notes, routes, and the tech layout, keeping the Lovable development sections.
+
+> Just to make sure the repo is safe to be public, now api keys or secrets right?
+
+Scanned the working tree and all 135 commits: no service-role key, tokens, or private keys. `.env` holds only the public project URL and publishable key; the old `PASSWORD = "nightbloom"` was game content, not a credential.
+
+> is the in game password hard coded? I has to be something auto generated from a list of phrased, other wise the game get easier after the first win
+
+> Use a list of several words and for each game chose x words from that list
+
+> For example a list with 100 words related to the game theme and the password is a random combination of 4 words from this list. this will me it near impossible to guess
+
+Replaced the hardcoded password: `startGame` now shuffles a 100-word garden-and-night list (`PASSWORD_PHRASES` in `src/game/map.ts`) and draws 4 unique words per game. The Orchard clue, gate check, god-mode plan, and end screen all read the per-game `state.password`. Added engine tests for word count, uniqueness, order, and the clue text.
+
+> I followed the instructions on god mode and could not wind the game and got this meeesgae: No complete winning plan found from this position. Unlock any changed actions, or restart from the owner's window to follow a fresh plan.
+
+Rewrote the god-mode planner (`src/game/winningPlan.ts`) to recover from any reachable position instead of giving up: holders are chosen only if free to actually Hold, a Hedge Knot player stages at the Sun Stone when needed, unlit players stuck past the hedge retreat south while someone holds, a lone trapped player is rescued by a teammate returning from the Gate or Outer Lawn, and illegal locked actions downgrade to Wait like the engine instead of truncating the plan. Added five recovery tests; all 37 game tests pass and a live two-player room showed a full winning plan.
+
+> What these messages from the log mean? R15 Artur stumbles and loses the round. R15 Leila stumbles and loses the round. R15 The groundskeeper walks to Fountain Court.
+
+Explained: R15 is round 15; Artur and Leila were in the room the groundskeeper walked into, so they were delayed and their locked actions were cancelled that round; the last line is his patrol move. Round 15 of 16 meant dawn was one round away.
+
+> remember to always update the docs/lovable-build-log.md file with the chat conent, my text and yours
+
+Agreed as a standing rule: every session's messages are appended to this file (saved to project memory so it is never forgotten).
