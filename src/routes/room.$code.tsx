@@ -25,7 +25,7 @@ export const Route = createFileRoute("/room/$code")({
 
 function RoomPage() {
   const code = Route.useParams().code.toUpperCase();
-  const { state, missing } = useRoom(code);
+  const { state, missing, refetch } = useRoom(code);
   const navigate = useNavigate();
   const [seat, setSeat] = useState<Seat | null>(null);
   const [seatLoaded, setSeatLoaded] = useState(false);
@@ -64,7 +64,14 @@ function RoomPage() {
 
   if (!me) {
     if (state.phase !== "lobby") return <Centered><p className="font-serif text-2xl">This game has already started.</p><Link to="/" className="text-lantern underline">Back home</Link></Centered>;
-    return <JoinForm code={code} state={state} onJoined={setSeat} />;
+    return <JoinForm code={code} state={state} onJoined={async (joined) => {
+      // The join response can arrive before Realtime delivers the new player.
+      // Refresh the roster before checking whether this newly issued seat exists.
+      await refetch();
+      saveSeat(code, joined);
+      setRemoved(false);
+      setSeat(joined);
+    }} />;
   }
   if (state.phase === "lobby") return <Lobby code={code} state={state} me={me.seatId} send={send} leave={leave} />;
   if (state.phase === "won" || state.phase === "lost") return <EndScreen state={state} me={me.seatId} send={send} leave={leave} />;
@@ -77,7 +84,7 @@ function Centered({ children }: { children: React.ReactNode }) {
   return <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-5 text-center">{children}</main>;
 }
 
-function JoinForm({ code, state, onJoined }: { code: string; state: GameState; onJoined: (s: Seat) => void }) {
+function JoinForm({ code, state, onJoined }: { code: string; state: GameState; onJoined: (s: Seat) => Promise<void> }) {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   return (
@@ -86,7 +93,7 @@ function JoinForm({ code, state, onJoined }: { code: string; state: GameState; o
       <p className="text-muted-foreground">{state.players.length} of 8 here: {state.players.map((p) => p.name).join(", ")}</p>
       <form className="panel-night flex w-full max-w-sm flex-col gap-3 p-6" onSubmit={async (e) => {
         e.preventDefault(); if (!name.trim()) return; setBusy(true);
-        try { const r = await joinRoom({ data: { code, name: name.trim() } }); const s = { token: r.token, seatId: r.seatId }; saveSeat(code, s); onJoined(s); }
+        try { const r = await joinRoom({ data: { code, name: name.trim() } }); const s = { token: r.token, seatId: r.seatId }; await onJoined(s); }
         catch (err) { toast.error((err as Error).message); setBusy(false); }
       }}>
         <Input value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoFocus />
