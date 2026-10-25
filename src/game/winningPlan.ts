@@ -11,7 +11,7 @@ export interface WinningPlan {
 export interface PlanOptions { /** Plan as if nobody had locked an action yet this round. */ ignoreLocks?: boolean }
 
 /** Joint-action resolutions the exact search may spend before falling back to the rule-based plan. */
-const SEARCH_BUDGET = 40000;
+export const SEARCH_BUDGET = { value: 40000 };
 const SKIP_ROOMS: RoomId[] = ["ivy_wall", "glass_house", "orchard"];
 
 const BEYOND: RoomId[] = ["rose_walk", "gate"];
@@ -108,7 +108,7 @@ function searchPlan(start: GameState): WinningPlan | "impossible" | null {
     const node = nodes[i]!;
     const lists = node.s.players.map((p) => candidates(node.s, p, i === 0));
     const combos = lists.reduce((n, l) => n * l.length, 1);
-    if (spent + combos > SEARCH_BUDGET) return null;
+    if (spent + combos > SEARCH_BUDGET.value) return null;
     spent += combos;
     const pick = new Array<number>(lists.length).fill(0);
     for (let c = 0; c < combos; c++) {
