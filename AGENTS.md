@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
+- Generate God mode's read-only, per-player round plan in pure `src/game/winningPlan.ts` using engine legality and resolution; render it on an independent room subpath so the owner can open a live guide without replacing gameplay or writing game state.
 - Game rules live in pure `src/game/engine.ts` (tested); server functions in `src/game/room.functions.ts` are the only writers — browsers never resolve rounds.
 - Generate shared room-tip log entries in the pure engine at start and first team discovery, using room definitions and visited state, so every player receives the same tips without browser-generated duplicates.
 - Whole room state is one realtime `rooms` row; seat tokens live in `room_seats` (service-role only); `resolve_round` RPC is the round-guarded write.

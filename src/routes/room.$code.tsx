@@ -165,7 +165,6 @@ function GodModeButton({ code }: { code: string }) {
 
 function Game({ code, state, me, send, leave }: { code: string; state: GameState; me: string; send: Send; leave: () => void }) {
   const player = state.players.find((p) => p.id === me);
-  const room = ROOMS[player.room];
   const mine = state.pending[me];
   const locked = !!mine?.locked;
   const [word, setWord] = useState("");
@@ -202,6 +201,7 @@ function Game({ code, state, me, send, leave }: { code: string; state: GameState
           <Button asChild size="sm" variant="outline">
             <Link to="/how-to-play" target="_blank" rel="noopener noreferrer" aria-label="Instructions (opens in a new tab)">Instructions</Link>
           </Button>
+          {isHost && <GodModeButton code={code} />}
           {isHost && (
             <Button size="sm" variant="outline" disabled={restarting} onClick={async () => {
               if (!window.confirm("Restart the game for all players? Everyone returns to their starting room at round 1. Lanterns, the key, gate progress, chosen actions, and the Event log reset. Team chat and players stay.")) return;
