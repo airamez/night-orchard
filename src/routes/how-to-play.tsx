@@ -152,7 +152,7 @@ function HowToPlay() {
         <ul className="list-disc space-y-1 pl-6">
           <li>It opens <b>for that round only</b>. The hedge weaves shut again at the end of every round, so every crossing needs a fresh Hold.</li>
           <li>The holder <b>gives up their move</b> — Hold is all they do that round.</li>
-          <li>You <b>cannot</b> choose Hold while standing in the Hedge Knot itself. Only the Sun Stone and the Rose Work— sorry, the Rose Walk — can hold it open. So someone must always help you: a player who stepped aside to the Sun Stone, or one who already crossed.</li>
+          <li>You <b>cannot</b> choose Hold while standing in the Hedge Knot itself. Only the Sun Stone and the Rose Walk can hold it open. So someone must always help you: a player who stepped aside to the Sun Stone, or one who already crossed.</li>
         </ul>
         <p>
           <b>Why it matters for winning:</b> the Rose Walk connects only to the Hedge Knot (through the hedge) and
