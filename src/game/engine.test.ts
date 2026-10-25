@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addPlayer, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
+import { addPlayer, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
 
 function game(n = 2): GameState {
   let s = newLobby("p0", "P0");
@@ -103,6 +103,12 @@ describe("Night Orchard rules", () => {
     let t = game(2);
     t = resolve(act(t, { p1: { type: "distract" } }));
     expect(t.players[1]!.delayed).toBe(false);
+  });
+
+  it("distract is only legal the round the groundskeeper walks into your room", () => {
+    const s = game(2); // gk at oak_shrine, next stop bell_lawn where p1 stands
+    expect(isLegal(s, s.players[1]!, { type: "distract" })).toBe(true);
+    expect(isLegal(s, s.players[0]!, { type: "distract" })).toBe(false);
   });
 
   it("loses after round 16", () => {

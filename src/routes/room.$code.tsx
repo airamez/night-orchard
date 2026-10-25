@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
-import { NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
+import { GK_PATH, NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
 import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
@@ -168,6 +168,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
   const lockedCount = state.players.filter((p) => state.pending[p.id]?.locked).length;
   const occupants = state.players.filter((p) => p.room === player.room && p.id !== me);
   const gkHere = gkRoom(state) === player.room;
+  const gkComing = GK_PATH[(state.gkIndex + 1) % GK_PATH.length] === player.room;
 
   const options: { label: string; action: Action; tone?: "shut" | undefined }[] = [];
   for (const [dir, to] of Object.entries(room.exits) as [Dir, string][]) {
@@ -179,7 +180,9 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
   for (const a of [{ type: "pickup" }, { type: "drop" }, { type: "usekey" }, { type: "hold" }, { type: "light" }] as Action[]) {
     if (isLegal(state, player, a)) options.push({ label: { pickup: "Pick up the iron key", drop: "Drop the iron key", usekey: "Use the iron key on the east door", hold: "Hold", light: `Light your ${player.lantern} lantern` }[a.type as "pickup"], action: a });
   }
-  options.push({ label: "Wait", action: { type: "wait" } }, { label: "Distract the groundskeeper", action: { type: "distract" } });
+  options.push({ label: "Wait", action: { type: "wait" } });
+  // Distract is only shown the round the groundskeeper walks into this room.
+  if (gkComing) options.push({ label: "Distract the groundskeeper", action: { type: "distract" } });
   const same = (a: Action) => mine && mine.action.type === a.type && mine.action.dir === a.dir && (a.type !== "speak");
 
   return (
@@ -227,6 +230,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
             </div>
             {player.hasKey && <p className="text-lantern">You carry the iron key</p>}
             {player.delayed && <p className="text-sm text-alert">You are delayed: your next locked action will be cancelled.</p>}
+            {gkComing && <p className="text-sm text-alert">The groundskeeper walks into {room.title} this round — Distract him, or everyone here is delayed.</p>}
             <div className="grid gap-2 sm:grid-cols-2">
               {options.map((o) => (
                 <Button key={o.label} disabled={locked} variant={same(o.action) ? "default" : o.tone === "shut" ? "destructive" : "outline"}
