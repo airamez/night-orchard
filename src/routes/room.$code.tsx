@@ -226,7 +226,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
 
           <div className="panel-night space-y-3 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : `(wakes at ${ROOMS[SHRINE_OF[player.lantern]].title})`}</span>
+              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : <>(wakes at {ROOMS[SHRINE_OF[player.lantern]].title}) <LanternIcon lantern={player.lantern} size={16} /></>}</span>
             </div>
             {player.hasKey && <p className="text-lantern">You carry the iron key</p>}
             {player.delayed && <p className="text-sm text-alert">You are delayed: your next locked action will be cancelled.</p>}
