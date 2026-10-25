@@ -2,7 +2,7 @@
 
 - [x] Diagnose and repair missing location capture; verify retry behavior and privacy.
 - [x] Add a shared report/suggestion form with 255-character fields (email draft until sender setup).
-- [ ] Enable automatic report emails after the sender domain is configured (waiting on user).
+- [ ] Replace email drafts with saved reports and list them at the dashboard bottom.
 - [x] Verify changes and append this exchange to the build log.
 
 - [x] Resume and complete the dashboard after the credit top-up (2026-10-25).
