@@ -11,3 +11,4 @@
 - [x] Add and verify an owner-only restart button during play that resets the shared game after confirmation.
 - [x] Add retro pixel icons for each lantern/shrine pair in map room headers and beside the "wakes at" text.
 - [x] Redraw the bell as a recognizable bell and keep every icon readable on the lit (yellow) room header.
+- [x] Give every icon one fixed color set on its own plate so it reads on any room-box header.
