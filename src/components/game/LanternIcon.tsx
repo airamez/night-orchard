@@ -4,6 +4,9 @@ import type { Lantern } from "@/game/map";
  * Retro 12x12 pixel-art icons for each lantern and its shrine room.
  * `LanternPixels` renders the raw <rect> pixels inside an existing SVG
  * (used by the map); `LanternIcon` wraps them in a standalone <svg> for HTML.
+ *
+ * Every icon is drawn on its own dark plate so the same colors work on any
+ * room-box header, including the lit (yellow) header of the room you are in.
  */
 
 const PALETTE: Record<string, string> = {
@@ -15,18 +18,6 @@ const PALETTE: Record<string, string> = {
   h: "var(--icon-brass-hi)",
   m: "var(--icon-moon)",
   r: "var(--icon-roof)",
-};
-
-/** Variant for pale/lit backgrounds (the yellow header of the room you are in). */
-const DARK_PALETTE: Record<string, string> = {
-  g: "var(--icon-leaf-dark)",
-  t: "var(--icon-trunk-dark)",
-  s: "var(--icon-stone-dark)",
-  d: "var(--icon-hole-dark)",
-  b: "var(--icon-brass-dark)",
-  h: "var(--icon-brass-hi-dark)",
-  m: "var(--icon-moon-dark)",
-  r: "var(--icon-roof-dark)",
 };
 
 const GRIDS: Record<Lantern, string[]> = {
@@ -96,17 +87,17 @@ export const LANTERN_ICON_LABEL: Record<Lantern, string> = {
 };
 
 /** Raw pixels for embedding inside another SVG. Grid origin is (0,0); scale via the parent <g>. */
-export function LanternPixels({ lantern, dark = false }: { lantern: Lantern; dark?: boolean }) {
-  const palette = dark ? DARK_PALETTE : PALETTE;
+export function LanternPixels({ lantern }: { lantern: Lantern }) {
   const rects: { x: number; y: number; fill: string }[] = [];
   GRIDS[lantern].forEach((row, y) => {
     [...row].forEach((ch, x) => {
-      const fill = palette[ch];
+      const fill = PALETTE[ch];
       if (fill) rects.push({ x, y, fill });
     });
   });
   return (
     <g shapeRendering="crispEdges">
+      <rect x={-0.8} y={-0.8} width={13.6} height={13.6} rx={1.8} fill="var(--icon-plate)" stroke="var(--icon-plate-edge)" strokeWidth={0.35} />
       {rects.map((r, i) => (
         <rect key={i} x={r.x} y={r.y} width={1} height={1} fill={r.fill} />
       ))}
@@ -120,7 +111,7 @@ export function LanternIcon({ lantern, size = 18, className }: { lantern: Lanter
     <svg
       width={size}
       height={size}
-      viewBox="0 0 12 12"
+      viewBox="-1.4 -1.4 14.8 14.8"
       role="img"
       aria-label={`${lantern} lantern icon: ${LANTERN_ICON_LABEL[lantern]}`}
       className={`inline-block align-[-3px] ${className ?? ""}`}
