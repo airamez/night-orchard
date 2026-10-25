@@ -2,8 +2,9 @@
 
 A cooperative, browser-based hedge-maze escape game for 2–8 players. One team, one shared garden, one dawn.
 
-**Play now**: https://night-orchard.lovable.app
 **How to play (rules, actions, worked examples)**: https://night-orchard.lovable.app/how-to-play
+
+**Play now**: https://night-orchard.lovable.app
 
 ## The game
 
