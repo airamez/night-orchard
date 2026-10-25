@@ -62,13 +62,13 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
         const r = ROOMS[id]; const [x, y] = position(id); const known = visited.has(id);
         const here = state.players.filter((p) => p.room === id);
         return (
-          <g key={id} aria-label={`${known ? r.title : "Unexplored room"}, ${here.length} players`}>
+          <g key={id} aria-label={`${r.title}${known ? "" : " (unexplored)"}, ${here.length} players`}>
             <rect x={x - roomWidth / 2} y={y} width={roomWidth} height={height(id)} rx={6}
-              strokeWidth={id === myRoom ? 2 : 1} className={`fill-card ${id === myRoom ? "stroke-lantern" : "stroke-border"}`} />
+              strokeWidth={id === myRoom ? 2 : 1} className={`fill-card ${id === myRoom ? "stroke-lantern" : known ? "stroke-border" : "stroke-muted-foreground/30"}`} />
             <path d={`M ${x - roomWidth / 2 + 6} ${y} H ${x + roomWidth / 2 - 6} Q ${x + roomWidth / 2} ${y} ${x + roomWidth / 2} ${y + 6} V ${y + headerHeight} H ${x - roomWidth / 2} V ${y + 6} Q ${x - roomWidth / 2} ${y} ${x - roomWidth / 2 + 6} ${y} Z`}
               className={id === myRoom ? "fill-lantern" : known ? "fill-hedge" : "fill-muted"} />
             <text x={x} y={y + headerHeight / 2} dominantBaseline="middle" textAnchor="middle"
-              className={`${id === myRoom ? "fill-ink" : "fill-parchment"} text-[18px] font-sans font-bold`}>{known ? r.title : "?"}</text>
+              className={`${id === myRoom ? "fill-ink" : known ? "fill-parchment" : "fill-muted-foreground"} text-[18px] font-sans font-bold ${known ? "" : "opacity-70"}`}>{r.title}</text>
             {here.map((p, index) => (
               <g key={p.id} aria-label={`${p.name}${p.id === me ? " (you)" : ""} at ${r.title}`}>
                 <title>{p.name}{p.id === me ? " (you)" : ""} — {r.title}</title>
