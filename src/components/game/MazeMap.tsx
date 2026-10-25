@@ -1,10 +1,12 @@
-import { ROOMS, type RoomId } from "@/game/map";
+import { ROOMS, SHRINE_OF, type RoomId } from "@/game/map";
 import type { GameState } from "@/game/engine";
 import { LanternPixels, LANTERN_ICON_LABEL } from "@/components/game/LanternIcon";
 
 export function MazeMap({ state, me, full = false, label = "Map of explored rooms" }: { state: Pick<GameState, "visited" | "players" | "doorUnlocked">; me?: string | undefined; full?: boolean; label?: string }) {
   const visited = new Set(full ? Object.values(ROOMS).map((room) => room.id) : state.visited);
   const myRoom = state.players.find((p) => p.id === me)?.room;
+  // Shrines where someone has already lit their lantern get a glowing gold border.
+  const litShrines = new Set(state.players.filter((p) => p.lit).map((p) => SHRINE_OF[p.lantern]));
   const edges: { a: RoomId; b: RoomId; hedge: boolean; locked: boolean }[] = [];
   const seen = new Set<string>();
   for (const id of visited) {
@@ -63,7 +65,13 @@ export function MazeMap({ state, me, full = false, label = "Map of explored room
         const r = ROOMS[id]; const [x, y] = position(id); const known = visited.has(id);
         const here = state.players.filter((p) => p.room === id);
         return (
-          <g key={id} aria-label={`${r.title}${known ? "" : " (unexplored)"}, ${here.length} players`}>
+          <g key={id} aria-label={`${r.title}${known ? "" : " (unexplored)"}${litShrines.has(id) ? " (lantern lit here)" : ""}, ${here.length} players`}>
+            {litShrines.has(id) && (
+              <rect x={x - roomWidth / 2 - 3} y={y - 3} width={roomWidth + 6} height={height(id) + 6} rx={8}
+                strokeWidth={2.5} className="shrine-lit fill-none stroke-lantern">
+                <title>{r.shrine} lantern lit here</title>
+              </rect>
+            )}
             <rect x={x - roomWidth / 2} y={y} width={roomWidth} height={height(id)} rx={6}
               strokeWidth={id === myRoom ? 2 : 1} className={`fill-card ${id === myRoom ? "stroke-lantern" : known ? "stroke-border" : "stroke-muted-foreground/30"}`} />
             <path d={`M ${x - roomWidth / 2 + 6} ${y} H ${x + roomWidth / 2 - 6} Q ${x + roomWidth / 2} ${y} ${x + roomWidth / 2} ${y + 6} V ${y + headerHeight} H ${x - roomWidth / 2} V ${y + 6} Q ${x - roomWidth / 2} ${y} ${x - roomWidth / 2 + 6} ${y} Z`}

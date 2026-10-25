@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { LanternIcon } from "@/components/game/LanternIcon";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { GK_PATH, NAME_MAX, PASSWORD_LINE, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, passwordClue, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
+import { winningPlan } from "@/game/winningPlan";
 import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
 export const Route = createFileRoute("/room/$code")({
@@ -173,6 +174,20 @@ function Game({ code, state, me, send, leave, godMode }: { code: string; state: 
   const player = state.players.find((p) => p.id === me);
   const mine = state.pending[me];
   const locked = !!mine?.locked;
+  // God mode (?god-mode on this window's URL): pre-select this player's planned action
+  // each round. It only chooses — the player still presses Lock action, and can change it.
+  const planned = useMemo(() => {
+    if (!godMode || state.phase !== "playing") return undefined;
+    const step = winningPlan(state).steps[0];
+    return step?.round === state.round ? step.players.find((p) => p.id === me)?.action : undefined;
+  }, [godMode, state, me]);
+  const autoPicked = useRef("");
+  useEffect(() => {
+    const key = `${state.round}`;
+    if (!planned || mine?.action || autoPicked.current === key) return;
+    autoPicked.current = key;
+    void send({ op: "choose", action: planned });
+  }, [planned, mine?.action, state.round, send]);
   const [word, setWord] = useState("");
   const [restarting, setRestarting] = useState(false);
   if (!player) return null;
@@ -244,7 +259,7 @@ function Game({ code, state, me, send, leave, godMode }: { code: string; state: 
 
           <div className="panel-night space-y-3 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : <>(wakes at {ROOMS[SHRINE_OF[player.lantern]].title}) <LanternIcon lantern={player.lantern} size={16} /></>}</span>
+              <span className="flex flex-wrap items-center gap-1.5"><LanternIcon lantern={player.lantern} size={16} />Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? `(lit at ${ROOMS[SHRINE_OF[player.lantern]].title})` : `(wakes at ${ROOMS[SHRINE_OF[player.lantern]].title})`}</span>
             </div>
             {player.hasKey && <p className="text-lantern">You carry the iron key</p>}
             {player.delayed && <p className="text-sm text-alert">You are delayed: your next locked action will be cancelled.</p>}

@@ -162,3 +162,13 @@
 @utility crt-flicker {
   animation: crt-flicker 4s linear infinite;
 }
+
+/* A shrine whose lantern has been lit glows gold on the map. */
+@keyframes shrine-glow {
+  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 3px var(--lantern)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 9px var(--lantern)); }
+}
+
+@utility shrine-lit {
+  animation: shrine-glow 2.4s ease-in-out infinite;
+}

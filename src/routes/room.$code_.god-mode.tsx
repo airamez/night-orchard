@@ -38,6 +38,7 @@ function GodMode() {
           <div className="space-y-2">
             <h2 className="font-serif text-2xl">Winning steps for every player</h2>
             <p className="text-muted-foreground">In each player's window, choose the action below and press Lock action. Lock every player, including anyone already outside, to advance the round.</p>
+            <p className="text-sm text-lantern">Shortcut: open each player's window with <code>/room/{code}?god-mode</code> and their planned action is chosen for them every round — just press Lock action.</p>
             <p className="text-sm text-muted-foreground">This guide updates with the room and does not play for you. It reveals the password, so the key and Orchard detour are not needed.</p>
           </div>
           {state.phase === "lobby" && <p className="text-lantern">Start the game in the owner's window. These steps use the starting rooms assigned to this team.</p>}
