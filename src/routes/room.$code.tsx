@@ -234,6 +234,8 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
                 : <Button className="lantern-glow" onClick={() => send({ op: "lock" })}>Lock action</Button>}
             </div>
           </div>
+
+          <Chat state={state} send={send} />
         </section>
 
         <aside className="min-w-0 space-y-4">
@@ -241,10 +243,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Roster state={state} me={me} isHost={isHost} send={send} />
         </aside>
       </div>
-      <div className="mt-5 grid gap-5 md:grid-cols-2">
-        <EventLog state={state} />
-        <Chat state={state} send={send} />
-      </div>
+      <EventLog state={state} />
     </main>
   );
 }
