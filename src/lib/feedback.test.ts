@@ -14,3 +14,11 @@ describe("feedback", () => {
     expect(feedbackSchema.safeParse({ title: "  ", description: " " }).success).toBe(false);
   });
 });
+import { isOwnerEmail } from "./feedback";
+describe("admin owner", () => {
+  it("only airamez@gmail.com is the owner", () => {
+    expect(isOwnerEmail("Airamez@gmail.com")).toBe(true);
+    expect(isOwnerEmail("someone@gmail.com")).toBe(false);
+    expect(isOwnerEmail(null)).toBe(false);
+  });
+});

@@ -15,9 +15,11 @@ export function FeedbackDialog() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const reset = () => { setTitle(""); setDescription(""); setError(""); setSaved(false); };
   return <footer className="mx-auto flex max-w-6xl justify-center px-5 py-5">
-    <Dialog>
+    <Dialog open={open} onOpenChange={(next) => { if (saving) return; setOpen(next); if (!next) reset(); }}>
       <DialogTrigger asChild><Button variant="outline" size="sm"><Bug />Report Bugs or Suggestion</Button></DialogTrigger>
       <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] overflow-y-auto">
         <DialogHeader><DialogTitle>Report a bug or suggestion</DialogTitle><DialogDescription>Reports appear on the public dashboard. Please do not include personal information.</DialogDescription></DialogHeader>
@@ -31,7 +33,7 @@ export function FeedbackDialog() {
           try {
             const { error: saveError } = await supabase.from("game_feedback").insert(parsed.data);
             if (saveError) throw new Error("Save failed");
-            setSaved(true);
+            setTitle(""); setDescription(""); setSaved(true);
             await queryClient.invalidateQueries({ queryKey: ["feedback"] });
           } catch { setError("Your report could not be saved. Please try again."); }
           finally { setSaving(false); }

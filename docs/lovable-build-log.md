@@ -755,3 +755,9 @@ Checked the current preview in a fresh browser, opened the report dialog, filled
 Implemented saved reports with title, description and submission date, public insert/read policies and database-enforced 255-character limits. The form validates input, shows saving/error/success states and warns that reports are public and should not include personal information. The dashboard lists the latest 200 reports newest first, refreshing every 30 seconds and through Refresh. Email drafts are removed and sender-domain setup is no longer required for this feature. Three feedback validation tests passed; a fresh browser submitted a labeled test report and read it back through /dashboard with no runtime errors. Current build reports build OK. The test report remains visible as a labeled verification entry.
 
 **Completion:** Reports now save directly and appear at the bottom of the public dashboard; tested successfully, with no email setup needed.
+
+---
+
+**User:** The report a bug or suggestion form is not cleaning and even if I close and re-open the Save button is disabled and marked as Saved and the content is not cleared. Another ask is to add an admin page requiring authentication to my Lovable account: airamez@gmail.com. At /admin ask for authentication and show all bugs and suggestions with a button to delete each record.
+
+**Assistant:** Fixed the report form: it clears after saving and fully resets when closed. Added /admin with Sign in with Lovable; only airamez@gmail.com sees the reports, each with a Delete button. Deletion is also enforced by a database rule allowing only that account.
