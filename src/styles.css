@@ -102,3 +102,48 @@
 @utility lantern-glow {
   box-shadow: var(--glow);
 }
+
+/* Retro CRT end screen */
+@utility crt-frame {
+  position: relative;
+  overflow: hidden;
+  border: 4px solid var(--border);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(ellipse at 50% 40%, color-mix(in oklab, var(--night-soft) 60%, transparent), var(--background) 75%);
+  box-shadow:
+    inset 0 0 60px oklch(0 0 0 / 0.55),
+    0 0 40px color-mix(in oklab, var(--lantern) 18%, transparent);
+}
+
+@utility crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    oklch(0 0 0 / 0.28) 0px,
+    oklch(0 0 0 / 0.28) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+@keyframes crt-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+@utility crt-blink {
+  animation: crt-blink 1.1s steps(1) infinite;
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.86; }
+  94% { opacity: 1; }
+  97% { opacity: 0.92; }
+  98% { opacity: 1; }
+}
+
+@utility crt-flicker {
+  animation: crt-flicker 4s linear infinite;
+}
