@@ -45,6 +45,28 @@ describe("Night Orchard rules", () => {
       .toEqual(["fountain", "bell_lawn"]);
   });
 
+  it("restarts the whole team at round 1 while retaining seats and chat", () => {
+    const previous = resolve(act(game(), { p0: { type: "move", dir: "north" } }));
+    previous.doorUnlocked = true;
+    previous.passwordSolved = true;
+    previous.keyRoom = null;
+    previous.players = previous.players.map((p) => ({ ...p, lit: true, hasKey: true, helped: 2 }));
+    previous.pending = { p0: { action: { type: "wait" }, locked: true } };
+    previous.chat = [{ name: "Jose", text: "Try again together", t: 1 }];
+    const restarted = startGame(previous);
+    expect(restarted.round).toBe(1);
+    expect(restarted.phase).toBe("playing");
+    expect(restarted.hostId).toBe(previous.hostId);
+    expect(restarted.players.map((p) => p.id)).toEqual(previous.players.map((p) => p.id));
+    expect(restarted.players.map((p) => p.room)).toEqual(["fountain", "bell_lawn"]);
+    expect(restarted.players.every((p) => !p.lit && !p.hasKey && !p.delayed && p.helped === 0)).toBe(true);
+    expect(restarted.keyRoom).toBe("bell_lawn");
+    expect(restarted.doorUnlocked).toBe(false);
+    expect(restarted.passwordSolved).toBe(false);
+    expect(restarted.pending).toEqual({});
+    expect(restarted.chat).toEqual(previous.chat);
+  });
+
   it("hedge stays shut without a holder and opens with one", () => {
     let s = game(4);
     s = resolve(act(s, { p3: { type: "move", dir: "north" } }));
