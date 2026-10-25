@@ -1,8 +1,10 @@
 # Roadmap
 
-- [ ] Add /dashboard with game, player, outcome, and God mode totals.
-- [ ] Persist restart-safe activity and approximate locations without IP addresses.
-- [ ] Verify tracking, dashboard, privacy rules, and record this exchange in the build log.
+- [x] Resume and complete the dashboard after the credit top-up (2026-10-25).
+- [x] Add /dashboard with game, player, outcome, and God mode totals.
+- [x] Persist restart-safe activity and approximate locations without IP addresses.
+- [x] Verify tracking, dashboard, privacy rules, and record this exchange in the build log (public-IP capture cannot be checked from the local browser).
+- [x] Answer “Are you stuck?” and report dashboard completion.
 
 - [x] Draw each game's gate password from a word list instead of the fixed "nightbloom".
 - [x] Fold in follow-up: password is x words chosen from the list per game.

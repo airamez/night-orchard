@@ -15,6 +15,13 @@
       "when": 1792949909410,
       "tag": "0001_game_activity_dashboard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792950906751,
+      "tag": "0002_preserve_finished_activity_outcomes",
+      "breakpoints": true
     }
   ]
 }
