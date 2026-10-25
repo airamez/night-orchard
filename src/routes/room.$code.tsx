@@ -47,7 +47,7 @@ function RoomPage() {
   useEffect(() => {
     if (!seat || !inRoom) return;
     void trackRoomVisit({ data: { code, token: seat.token, godMode: godModeUrl } }).catch(() => {});
-  }, [code, seat, inRoom, godModeUrl, state?.phase]);
+  }, [code, seat, inRoom, godModeUrl, state?.phase, state?.password]);
   // If we had a seat but are no longer in the player list, we left or were removed.
   useEffect(() => {
     if (seatLoaded && seat && state && !inRoom) {

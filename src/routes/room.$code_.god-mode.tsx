@@ -26,7 +26,7 @@ function GodMode() {
   useEffect(() => {
     const seat = loadSeat(code);
     if (seat && state?.players.some((p) => p.id === seat.seatId)) void trackRoomVisit({ data: { code, token: seat.token, godMode: true } }).catch(() => {});
-  }, [code, state?.phase]);
+  }, [code, state?.phase, state?.password]);
   const plan = useMemo(() => state ? winningPlan(state) : null, [state]);
   const warnings = useMemo(() => state && plan ? lockWarnings(state, plan) : [], [state, plan]);
   const spare = plan?.won ? ROUND_LIMIT - (plan.steps.at(-1)?.round ?? ROUND_LIMIT) : 0;
