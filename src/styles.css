@@ -84,6 +84,14 @@
   --icon-brass-hi: oklch(0.9 0.09 95);
   --icon-moon: oklch(0.9 0.05 100);
   --icon-roof: oklch(0.52 0.1 30);
+  --icon-leaf-dark: oklch(0.34 0.09 150);
+  --icon-trunk-dark: oklch(0.32 0.06 70);
+  --icon-stone-dark: oklch(0.42 0.02 120);
+  --icon-hole-dark: oklch(0.25 0.02 165);
+  --icon-brass-dark: oklch(0.34 0.08 82);
+  --icon-brass-hi-dark: oklch(0.46 0.09 85);
+  --icon-moon-dark: oklch(0.32 0.04 120);
+  --icon-roof-dark: oklch(0.32 0.09 30);
 }
 
 @layer base {
