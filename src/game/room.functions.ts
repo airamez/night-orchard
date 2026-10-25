@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { addPlayer, allLocked, isLegal, newLobby, resolve, startGame, type Action, type GameState } from "./engine";
+import { addPlayer, allLocked, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const randomCode = () => Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join("");
@@ -83,6 +83,8 @@ const opSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("lock") }),
   z.object({ op: z.literal("unlock") }),
   z.object({ op: z.literal("forceWait"), target: z.string() }),
+  z.object({ op: z.literal("leave") }),
+  z.object({ op: z.literal("kick"), target: z.string() }),
   z.object({ op: z.literal("chat"), text: z.string().trim().min(1).max(240) }),
 ]);
 
@@ -106,6 +108,7 @@ export const roomAction = createServerFn({ method: "POST" })
           return startGame(s);
         case "restart":
           if (!isHost) throw new Error("Only the host can restart.");
+          if (s.players.length === 0) throw new Error("There is no one left in this room.");
           return startGame(s);
         case "choose": {
           if (s.phase !== "playing" || s.pending[me]?.locked) return s;
@@ -124,6 +127,14 @@ export const roomAction = createServerFn({ method: "POST" })
           if (s.pending[b.target]?.locked) return s;
           return { ...s, pending: { ...s.pending, [b.target]: { action: { type: "wait" }, locked: true } },
             log: [...s.log, { r: s.round, text: `${s.players.find((p) => p.id === b.target)?.name ?? "A player"} is set to Wait by the host.` }] };
+        case "leave":
+          return removePlayer(s, me);
+        case "kick": {
+          if (!isHost) throw new Error("Only the host can remove a player.");
+          if (b.target === me) throw new Error("You cannot remove yourself. Use Leave instead.");
+          if (!s.players.some((p) => p.id === b.target)) throw new Error("That player is not in this room.");
+          return removePlayer(s, b.target);
+        }
         case "chat":
           return { ...s, chat: [...s.chat, { name: player.name, text: b.text, t: Date.now() }].slice(-150) };
       }

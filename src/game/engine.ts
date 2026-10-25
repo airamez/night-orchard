@@ -47,6 +47,28 @@ export function addPlayer(s: GameState, id: string, name: string): GameState {
   return { ...s, players: [...s.players, blankPlayer(id, name)] };
 }
 
+/** Remove a player mid-game or from the lobby; the host role passes to the next player. */
+export function removePlayer(s: GameState, id: string): GameState {
+  const p = s.players.find((x) => x.id === id);
+  if (!p) return s;
+  const players = s.players.filter((x) => x.id !== id);
+  const pending = { ...s.pending };
+  delete pending[id];
+  const next: GameState = {
+    ...s,
+    players,
+    pending,
+    hostId: s.hostId === id ? (players[0]?.id ?? s.hostId) : s.hostId,
+    log: [...s.log, { r: s.round, text: `${p.name} leaves the garden.` }],
+  };
+  // If everyone still inside has already escaped, the game is won.
+  if (next.phase === "playing" && players.length > 0 && players.every((x) => x.room === "outer_lawn")) {
+    next.phase = "won";
+    next.log = [...next.log, { r: s.round, text: "The gate closes behind you." }];
+  }
+  return next;
+}
+
 /** Start or restart: deal rooms and lanterns by join order, reset the world. */
 export function startGame(s: GameState): GameState {
   const players = s.players.map((p, i) => ({
