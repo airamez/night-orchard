@@ -690,3 +690,9 @@ Every action button now leads with an icon: direction arrows (North = up, South 
 > Add an archtecture.md file giving a high level summary about the full tech stack used in this project and add some mermai diagram show how to components are related. Make sure to explain which technlogy was used to keep each player browser updated and receiving new notifications
 
 Added `architecture.md` with the tech stack table, data model, a component diagram and a round sequence diagram (Mermaid). It explains that every browser stays in sync through Lovable Cloud Realtime (Postgres changes pushed over WebSockets) subscribed to the room's row, and that Event log and chat notifications travel inside that same pushed state.
+
+## Session: link the architecture document from the README (2026-10-25)
+
+> Add a reference in the readme.md to the archtecture.md file
+
+`README.md` now points to `architecture.md`: a sentence in the **Tech** section ("The full technical picture — tech stack, data model, component and round diagrams, and how every browser stays in sync — is in architecture.md") and a new line in the **Project layout** listing. No game behavior changed.
