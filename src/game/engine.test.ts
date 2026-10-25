@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { addPlayer, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
+import { PASSWORD_PHRASES } from "./map";
 
 function game(n = 2): GameState {
   let s = newLobby("p0", "P0");
@@ -78,6 +79,7 @@ describe("Night Orchard rules", () => {
 
   it("gate needs the password and a lit lantern", () => {
     let s = game(2);
+    s.password = "nightbloom";
     s.players[0]!.room = "gate";
     s = resolve(act(s, { p0: { type: "speak", text: "  NightBloom " } }));
     expect(s.passwordSolved).toBe(true);
