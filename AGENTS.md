@@ -13,4 +13,4 @@
 - Game rules live in pure `src/game/engine.ts` (tested); server functions in `src/game/room.functions.ts` are the only writers — browsers never resolve rounds.
 - Whole room state is one realtime `rooms` row; seat tokens live in `room_seats` (service-role only); `resolve_round` RPC is the round-guarded write.
 - Store player seats in per-window session storage so separate windows can play independently; refresh the roster before activating a newly joined seat and reject older room snapshots so delayed reads cannot look like player removal.
-- Render explored, documentation, and full-dialog maps through shared MapView/MazeMap using room definitions and live room state; numbered markers match the player-position list to avoid crowded names.
+- Render explored, documentation, and full-dialog maps through shared MapView/MazeMap using room definitions and live room state; calculate framing and row spacing from visible rooms and their occupants so labels remain legible.
