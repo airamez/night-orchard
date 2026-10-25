@@ -231,7 +231,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           </div>
         </section>
 
-        <aside className="space-y-4">
+        <aside className="min-w-0 space-y-4">
           <div className="panel-night p-4"><MapView state={state} me={me} /></div>
           <Roster state={state} me={me} isHost={isHost} send={send} />
         </aside>

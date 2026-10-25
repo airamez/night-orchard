@@ -18,7 +18,7 @@ function Positions({ state, me }: { state: MapState; me?: string }) {
 }
 
 export function MapView({ state, me, full = false }: { state: MapState; me?: string; full?: boolean }) {
-  return <div className="space-y-3">
+  return <div className="min-w-0 space-y-3">
     <Dialog>
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-serif text-xl">{full ? "The full maze" : "Team map"}</h3>
@@ -26,7 +26,7 @@ export function MapView({ state, me, full = false }: { state: MapState; me?: str
       </div>
       <div className="overflow-x-auto"><MazeMap state={state} me={me} full={full} /></div>
       <Positions state={state} me={me} />
-      <DialogContent aria-describedby={undefined} className="max-h-[92dvh] w-[calc(100%-2rem)] max-w-5xl overflow-y-auto p-4 sm:p-6">
+      <DialogContent aria-describedby={undefined} className="max-h-[92dvh] w-[calc(100%_-_2rem)] max-w-5xl overflow-y-auto p-4 sm:p-6">
         <DialogHeader><DialogTitle className="font-serif text-2xl">Night Orchard — full map</DialogTitle></DialogHeader>
         <div className="overflow-x-auto"><MazeMap state={state} me={me} full label="Entire Night Orchard maze and current player positions" /></div>
         <Positions state={state} me={me} />
