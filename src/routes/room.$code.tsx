@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
+import { LanternIcon } from "@/components/game/LanternIcon";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { GK_PATH, NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
