@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
+import { setResponseHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { dashboardSchema } from "./activity";
@@ -22,8 +22,3 @@ export const getActivityDashboard = createServerFn({ method: "GET" }).handler(as
   if (error) throw new Error("Activity is temporarily unavailable. Please try again.");
   return dashboardSchema.parse(data);
 });
-
-// Read only a proxy-provided address; never return or log it.
-export function visitorAddress() {
-  return getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-real-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim();
-}

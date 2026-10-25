@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HowToPlayRouteImport } from './routes/how-to-play'
 import { Route as DemoDefeatRouteImport } from './routes/demo.defeat'
 import { Route as DemoVictoryRouteImport } from './routes/demo.victory'
@@ -19,6 +20,11 @@ import { Route as RoomCodeGodModeRouteImport } from './routes/room.$code_.god-mo
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowToPlayRoute = HowToPlayRouteImport.update({
@@ -49,6 +55,7 @@ const RoomCodeGodModeRoute = RoomCodeGodModeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/how-to-play': typeof HowToPlayRoute
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/how-to-play': typeof HowToPlayRoute
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/how-to-play': typeof HowToPlayRoute
   '/demo/defeat': typeof DemoDefeatRoute
   '/demo/victory': typeof DemoVictoryRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/how-to-play'
     | '/demo/defeat'
     | '/demo/victory'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/how-to-play'
     | '/demo/defeat'
     | '/demo/victory'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
     | '/how-to-play'
     | '/demo/defeat'
     | '/demo/victory'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   HowToPlayRoute: typeof HowToPlayRoute
   DemoDefeatRoute: typeof DemoDefeatRoute
   DemoVictoryRoute: typeof DemoVictoryRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-to-play': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   HowToPlayRoute: HowToPlayRoute,
   DemoDefeatRoute: DemoDefeatRoute,
   DemoVictoryRoute: DemoVictoryRoute,

@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { addPlayer, allLocked, isLegal, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
 import { NAME_MAX } from "./map";
 import { publicAddress, locationFromResponse } from "./activity";
-import { visitorAddress } from "./activity.functions";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const randomCode = () => Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join("");
@@ -162,7 +162,7 @@ export const trackRoomVisit = createServerFn({ method: "POST" })
     if (data.godMode && !row?.activity_god_mode) await mutate(db, code, (s) => s, { godMode: true });
     const { data: existing } = await db.from("player_locations").select("seat_id").eq("seat_id", seatId).maybeSingle();
     if (existing) return { ok: true };
-    const ip = publicAddress(visitorAddress());
+    const ip = publicAddress(getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-real-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim());
     let location: ReturnType<typeof locationFromResponse> = null;
     if (ip) {
       try {
