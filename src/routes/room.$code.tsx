@@ -302,7 +302,7 @@ function Chat({ state, send }: { state: GameState; send: Send }) {
     <section className="panel-night flex flex-col p-4">
       <h3 className="mb-2 text-sm uppercase tracking-widest text-muted-foreground">Team chat</h3>
       <div ref={ref} className="mb-2 max-h-60 min-h-24 flex-1 space-y-1 overflow-y-auto text-sm">
-        {state.chat.length === 0 && <p className="text-muted-foreground">Read your room aloud. Nobody else can see it.</p>}
+        {state.chat.length === 0 && <p className="text-muted-foreground">No messages yet.</p>}
         {state.chat.map((m, i) => <p key={i}><b className="text-lantern">{m.name}:</b> {m.text}</p>)}
       </div>
       <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (text.trim()) { void send({ op: "chat", text: text.trim() }); setText(""); } }}>

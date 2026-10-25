@@ -58,18 +58,23 @@ function HowToPlay() {
         </ul>
       </Section>
 
-      <Section title="You can only see your own room">
+      <Section title="Room clues are shared automatically">
         <p>
-          This is the heart of the game. Each player sees only the room they stand in: its exits, its clues, and
-          who is there with them. The clues you need are scattered across different rooms, so <b>nobody can win
-          alone</b>.
+          Your room panel shows where you stand: its exits, its clues, and who is there with you.
+          The clues you need are scattered across different rooms, so the team needs to explore together.
         </p>
-        <p>Use the team chat to read your room aloud and share what you find.</p>
+        <p>
+          The <b>Event log</b> automatically shares the descriptions and tips from every starting room.
+          Whenever anyone reaches a room the team has not visited, its tips appear there for <b>everyone</b>,
+          with the discovering player’s name and round. Each room is shared once per game, so waiting or
+          returning does not repeat it. Undiscovered room clues stay hidden until someone arrives.
+        </p>
+        <p>There is no need to copy and paste clues. Use <b>team chat</b> for questions and plans: who takes the key, who lights a lantern, and who holds the hedge.</p>
         <Example>
           <p>
-            Artur stands in the Fountain Court and reads: <i>"The big key is under the bell."</i> He types it in
-            the chat. Airamez, who started on the Bell Lawn, picks up the iron key — he never would have known it
-            mattered without his message.
+            Artur starts in the Fountain Court. The Event log automatically shares its clue:
+            <i> "The big key is under the bell."</i> Airamez, on the Bell Lawn, reads it and writes in chat:
+            <i> "I’ll pick up the key and take it to the Glass House."</i>
           </p>
         </Example>
       </Section>
@@ -82,7 +87,7 @@ function HowToPlay() {
         </p>
         <p>
           During play, your team’s map reveals rooms as anyone visits them. Connected rooms you have not
-          visited yet appear as question marks. This example reveals the whole layout, but not the room clues.
+          visited yet show their real names in gray. This example reveals the whole layout, but not the room clues.
         </p>
         <figure className="mx-auto w-full">
           <MapView state={{ visited: Object.values(ROOMS).map((room) => room.id), players: [], doorUnlocked: false }} full />
@@ -200,7 +205,7 @@ function HowToPlay() {
 
       <Section title="How to win, step by step">
         <ol className="list-decimal space-y-2 pl-6">
-          <li><b>Read your room aloud in the chat.</b> Every clue matters to someone else.</li>
+          <li><b>Read the shared room tips in the Event log.</b> Starting rooms and newly explored rooms appear automatically. Use chat to agree on a plan.</li>
           <li><b>Find the iron key</b> (a clue tells you where) and carry it to the Glass House to unlock the east door.</li>
           <li><b>Find the password</b> — it is carved in the Orchard, past that locked door. Someone must speak it at the Gate.</li>
           <li><b>Light every lantern.</b> Each player must reach their own shrine. Watch the groundskeeper's patrol so you don't get delayed on the way.</li>
@@ -230,7 +235,7 @@ function HowToPlay() {
           <li>Plan the next round in chat <i>before</i> locking. A locked action can be changed until everyone has locked.</li>
           <li>Count the groundskeeper's steps. His route repeats, so you can always know where he goes next.</li>
           <li>Holding and distracting feel like doing nothing — they are often the most valuable moves in the game. The end screen remembers who helped.</li>
-          <li>Don't all rush the same corridor. Spread out, read rooms, and report back.</li>
+          <li>Don't all rush the same corridor. Spread out to discover rooms; their tips are automatically shared in the Event log.</li>
         </ul>
       </Section>
 
