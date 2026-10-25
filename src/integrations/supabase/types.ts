@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_activity: {
+        Row: {
+          ended_at: string | null
+          god_mode: boolean
+          historical: boolean
+          id: string
+          outcome: string
+          room_code: string
+          started_at: string
+        }
+        Insert: {
+          ended_at?: string | null
+          god_mode?: boolean
+          historical?: boolean
+          id?: string
+          outcome?: string
+          room_code: string
+          started_at?: string
+        }
+        Update: {
+          ended_at?: string | null
+          god_mode?: boolean
+          historical?: boolean
+          id?: string
+          outcome?: string
+          room_code?: string
+          started_at?: string
+        }
+        Relationships: []
+      }
+      game_participants: {
+        Row: {
+          game_id: string
+          seat_id: string
+        }
+        Insert: {
+          game_id: string
+          seat_id: string
+        }
+        Update: {
+          game_id?: string
+          seat_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_participants_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "game_activity"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_locations: {
+        Row: {
+          captured_at: string
+          city: string | null
+          country: string | null
+          region: string | null
+          seat_id: string
+        }
+        Insert: {
+          captured_at?: string
+          city?: string | null
+          country?: string | null
+          region?: string | null
+          seat_id: string
+        }
+        Update: {
+          captured_at?: string
+          city?: string | null
+          country?: string | null
+          region?: string | null
+          seat_id?: string
+        }
+        Relationships: []
+      }
       room_seats: {
         Row: {
           code: string
@@ -42,18 +119,24 @@ export type Database = {
       }
       rooms: {
         Row: {
+          activity_game_id: string | null
+          activity_god_mode: boolean
           code: string
           round: number
           state: Json
           updated_at: string
         }
         Insert: {
+          activity_game_id?: string | null
+          activity_god_mode?: boolean
           code: string
           round?: number
           state: Json
           updated_at?: string
         }
         Update: {
+          activity_game_id?: string | null
+          activity_god_mode?: boolean
           code?: string
           round?: number
           state?: Json
@@ -66,6 +149,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activity_dashboard: { Args: never; Returns: Json }
       resolve_round: {
         Args: { p_code: string; p_round: number; p_state: Json }
         Returns: boolean
