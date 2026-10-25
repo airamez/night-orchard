@@ -174,6 +174,18 @@ function HowToPlay() {
           The game only ends when the <i>last</i> player steps onto the lawn. Players who get out early should
           keep talking: the team still inside needs their eyes and memory.
         </p>
+        <p>
+          When the game ends, every player's screen changes to the same retro end screen — win or lose.
+          Take a peek:
+        </p>
+        <div className="flex flex-wrap gap-3 pt-1">
+          <Button asChild variant="outline">
+            <Link to="/demo/victory" target="_blank" rel="noopener noreferrer">See the victory screen</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/demo/defeat" target="_blank" rel="noopener noreferrer">See the defeat screen</Link>
+          </Button>
+        </div>
       </Section>
 
       <Section title="Tips">
