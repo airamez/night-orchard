@@ -739,3 +739,9 @@ Added a shared Report Bugs or Suggestion button with title and description, each
 Checked the current preview in a fresh browser, opened the report dialog, filled the title, refreshed, and reopened the dialog. Both runs succeeded with no runtime errors. The earlier telemetry references mixed React dependency versions following Vite's dependency optimization/reloads during the previous changes; only one installed React/React DOM version is present and the config already provides deduplication. No continuing crash was reproduced, so no speculative code changes were made. Current build reports build OK.
 
 **Completion:** The current report form opens without errors, including after refresh; reload the preview to clear the earlier error.
+
+## Session: clarify IP location testing (2026-10-25)
+
+> (Jose Santos) Did you test the call to get the location using the IP, why it failed? I already used the public one from google and it worked great
+
+**Assistant:** Yes—I retested ipwho.is with Google's public DNS IP, 8.8.8.8, and it returned San Jose, California, United States. The service works; the original failure was not conclusively traced, but the app could receive no usable player IP and then permanently save an unknown location, preventing retries. That retry bug is corrected, and the browser fallback passed a real two-player test; if you meant a Google location API, please share its name or documentation link so I can compare it.
