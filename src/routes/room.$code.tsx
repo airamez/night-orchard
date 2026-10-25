@@ -308,33 +308,3 @@ function Chat({ state, send }: { state: GameState; send: Send }) {
     </section>
   );
 }
-
-function EndScreen({ state, me, send, leave }: { state: GameState; me: string; send: Send; leave: () => void }) {
-  const won = state.phase === "won";
-  const helpers = [...state.players].filter((p) => p.helped > 0).sort((a, b) => b.helped - a.helped);
-  const inside = state.players.filter((p) => p.room !== "outer_lawn");
-  const last = inside.length ? inside : [...state.players].sort((a, b) => (b.outAt ?? 0) - (a.outAt ?? 0)).slice(0, 1);
-  const clues = [
-    state.firstVisitor.fountain && `The key is under the bell — read in Fountain Court by ${state.firstVisitor.fountain}.`,
-    state.firstVisitor.orchard && `The password NIGHTBLOOM — carved in the Orchard, found by ${state.firstVisitor.orchard}.`,
-    state.firstVisitor.hedge_knot && `The hedge opens while someone holds — read at the Hedge Knot by ${state.firstVisitor.hedge_knot}.`,
-  ].filter(Boolean);
-  return (
-    <main className="mx-auto max-w-2xl space-y-6 px-5 py-14">
-      <h1 className="text-center font-serif text-5xl">{won ? "The gate closes behind you." : "The garden locks again at dawn."}</h1>
-      <ul className="panel-parchment divide-y divide-border p-2">
-        {state.players.map((p) => (
-          <li key={p.id} className="flex justify-between px-3 py-2"><span><b>{p.name}</b> · {p.lantern} lantern</span><span>{p.room === "outer_lawn" ? "reached the lawn" : `still in ${ROOMS[p.room].title}`}</span></li>
-        ))}
-      </ul>
-      <div className="panel-night space-y-4 p-5 font-serif">
-        <div><p className="text-lantern">Who spent a turn so someone else could move?</p><p>{helpers.length ? helpers.map((h) => `${h.name} (${h.helped})`).join(", ") : "No one held or distracted."}</p></div>
-        <div><p className="text-lantern">Who was left inside the longest?</p><p>{last.map((p) => p.name).join(", ")}</p></div>
-        <div><p className="text-lantern">Which clue did the team only have because someone read their room aloud?</p>{clues.length ? clues.map((c) => <p key={c as string}>{c}</p>) : <p>None were found.</p>}</div>
-      </div>
-      {state.hostId === me ? <Button size="lg" className="w-full lantern-glow" onClick={() => send({ op: "restart" })}>Restart</Button>
-        : <p className="text-center text-muted-foreground">The host can restart with the same team.</p>}
-      <Button variant="ghost" className="w-full text-muted-foreground" onClick={leave}>Leave this room</Button>
-    </main>
-  );
-}
