@@ -8,3 +8,6 @@
 - [x] Explain event-log delay messages (R15 stumbles = delayed by the groundskeeper, action cancelled).
 - [x] Always append new chat messages (user + assistant) to docs/lovable-build-log.md — standing rule, do it every turn.
 - [x] God mode: explain when a position is truly lost (exhaustive check), show spare rounds, and warn about locked actions that cost the escape.
+- [x] God mode: windows opened with ?god-mode auto-choose that player's planned action each round.
+- [x] Restore the lantern icon in the action panel header when the lantern is lit.
+- [x] Map: shrines whose lantern has been lit get a glowing gold border.
