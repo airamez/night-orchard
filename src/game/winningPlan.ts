@@ -2,7 +2,17 @@ import { isLegal, resolve, startGame, type Action, type GameState, type Player }
 import { GK_PATH, PASSWORD_PHRASES, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir, type RoomId } from "./map";
 
 export interface WinningStep { round: number; players: { id: string; name: string; room: RoomId; action: Action }[] }
-export interface WinningPlan { steps: WinningStep[]; won: boolean }
+export interface WinningPlan {
+  steps: WinningStep[];
+  won: boolean;
+  /** True when an exhaustive search proved no escape before dawn exists from this position. */
+  impossible: boolean;
+}
+export interface PlanOptions { /** Plan as if nobody had locked an action yet this round. */ ignoreLocks?: boolean }
+
+/** Joint-action resolutions the exact search may spend before falling back to the rule-based plan. */
+const SEARCH_BUDGET = 40000;
+const SKIP_ROOMS: RoomId[] = ["ivy_wall", "glass_house", "orchard"];
 
 const BEYOND: RoomId[] = ["rose_walk", "gate"];
 
@@ -47,10 +57,92 @@ function nextPreparation(s: GameState, player: Player): Action {
  * reachable position: delays, deviating locked actions, stranded holders, and
  * players stuck on the wrong side of the hedge.
  */
-export function winningPlan(input: GameState): WinningPlan {
-  let s = input.phase === "lobby" ? startGame(input) : structuredClone(input);
+export function winningPlan(input: GameState, opts: PlanOptions = {}): WinningPlan {
+  const start = input.phase === "lobby" ? startGame(input) : structuredClone(input);
+  if (opts.ignoreLocks) start.pending = {};
+  if (start.players.length < 2 || start.phase !== "playing") return { steps: [], won: start.phase === "won", impossible: false };
+  const exact = searchPlan(start);
+  if (exact === "impossible") return { ...rulePlan(start), impossible: true };
+  if (exact) return exact;
+  return rulePlan(start);
+}
+
+/** Candidate actions for one player; pointless detours (dead ends, key chores) are skipped. */
+function candidates(s: GameState, p: Player, first: boolean): Action[] {
+  const locked = first && s.pending[p.id]?.locked ? s.pending[p.id]!.action : undefined;
+  if (p.delayed) return [{ type: "wait" }];
+  if (locked) return [isLegal(s, p, locked) ? locked : { type: "wait" }];
+  if (p.room === "outer_lawn") return [{ type: "wait" }, { type: "move", dir: "south" }];
+  const out: Action[] = [];
+  if (isLegal(s, p, { type: "light" })) out.push({ type: "light" });
+  if (p.room === "gate" && !s.passwordSolved) out.push({ type: "speak", text: s.password || PASSWORD_PHRASES[0]! });
+  for (const [dir, dest] of Object.entries(ROOMS[p.room].exits) as [Dir, RoomId][]) {
+    if (SKIP_ROOMS.includes(dest)) continue;
+    const a: Action = { type: "move", dir };
+    if (isLegal(s, p, a)) out.push(a);
+  }
+  if (isLegal(s, p, { type: "hold" })) out.push({ type: "hold" });
+  if (isLegal(s, p, { type: "distract" })) out.push({ type: "distract" });
+  out.push({ type: "wait" });
+  return out;
+}
+
+/** Interchangeable players share a key: once lit, only room and delay matter. */
+function stateKey(s: GameState): string {
+  return `${s.round}|${s.passwordSolved ? 1 : 0}|` + s.players.map((p) => `${p.lit ? "*" : p.lantern}${p.room}${p.delayed ? "!" : ""}`).sort().join(",");
+}
+
+/**
+ * Exact breadth-first search over whole-team rounds using the real engine, so the plan
+ * found is the fastest possible escape. Returns null when the team is too large to
+ * search within budget, and "impossible" when every reachable position loses.
+ */
+function searchPlan(start: GameState): WinningPlan | "impossible" | null {
+  type Node = { s: GameState; parent: number; actions: Action[] };
+  const root = structuredClone(start);
+  root.log = []; root.chat = [];
+  const nodes: Node[] = [{ s: root, parent: -1, actions: [] }];
+  const seen = new Set([stateKey(root)]);
+  let spent = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i]!;
+    const lists = node.s.players.map((p) => candidates(node.s, p, i === 0));
+    const combos = lists.reduce((n, l) => n * l.length, 1);
+    if (spent + combos > SEARCH_BUDGET) return null;
+    spent += combos;
+    const pick = new Array<number>(lists.length).fill(0);
+    for (let c = 0; c < combos; c++) {
+      let rest = c;
+      for (let k = lists.length - 1; k >= 0; k--) { pick[k] = rest % lists[k]!.length; rest = Math.floor(rest / lists[k]!.length); }
+      const actions = lists.map((l, k) => l[pick[k]!]!);
+      const trial = structuredClone(node.s);
+      trial.pending = Object.fromEntries(trial.players.map((p, k) => [p.id, { action: actions[k]!, locked: true }]));
+      const next = resolve(trial);
+      next.log = [];
+      if (next.phase === "lost") continue;
+      if (next.phase === "won") return { steps: buildSteps(nodes, i, actions), won: true, impossible: false };
+      const key = stateKey(next);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      nodes.push({ s: next, parent: i, actions });
+    }
+  }
+  return "impossible";
+}
+
+function buildSteps(nodes: { s: GameState; parent: number; actions: Action[] }[], last: number, lastActions: Action[]): WinningStep[] {
+  const chain: { s: GameState; actions: Action[] }[] = [{ s: nodes[last]!.s, actions: lastActions }];
+  for (let i = last; nodes[i]!.parent >= 0; i = nodes[i]!.parent) chain.unshift({ s: nodes[nodes[i]!.parent]!.s, actions: nodes[i]!.actions });
+  return chain.map(({ s, actions }) => ({
+    round: s.round,
+    players: s.players.map((p, k) => ({ id: p.id, name: p.name, room: p.room, action: actions[k]! })),
+  }));
+}
+
+/** Rule-based fallback for teams too large to search exactly. */
+function rulePlan(start: GameState): WinningPlan {
+  let s = structuredClone(start);
   const steps: WinningStep[] = [];
-  if (s.players.length < 2) return { steps, won: s.phase === "won" };
   for (let attempt = 0; attempt < ROUND_LIMIT && s.phase === "playing"; attempt++) {
     const gkNext = GK_PATH[(s.gkIndex + 1) % GK_PATH.length];
     const inside = s.players.filter((p) => p.room !== "outer_lawn");
@@ -117,7 +209,7 @@ export function winningPlan(input: GameState): WinningPlan {
     s.pending = Object.fromEntries(players.map((p) => [p.id, { action: p.action, locked: true }]));
     s = resolve(s);
   }
-  return { steps, won: s.phase === "won" };
+  return { steps, won: s.phase === "won", impossible: false };
 }
 
 export function winningAction(action: Action, room: RoomId): string {
