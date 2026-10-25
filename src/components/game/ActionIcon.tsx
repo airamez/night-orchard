@@ -15,10 +15,14 @@ const TYPE_ICON: Record<Exclude<Action["type"], "move">, typeof Key> = {
   distract: Music2,
 };
 
+function iconFor(action: Action) {
+  if (action.type === "move") return action.dir ? DIR_ICON[action.dir] : undefined;
+  return TYPE_ICON[action.type];
+}
+
 /** Small icon for an action: direction arrows for moves, themed icons for everything else. */
 export function ActionIcon({ action, size = 16, className }: { action: Action | undefined; size?: number; className?: string }) {
-  if (!action) return null;
-  const Icon = action.type === "move" && action.dir ? DIR_ICON[action.dir] : TYPE_ICON[action.type];
+  const Icon = action ? iconFor(action) : undefined;
   if (!Icon) return null;
   return <Icon size={size} strokeWidth={2.25} aria-hidden="true" className={className} />;
 }
