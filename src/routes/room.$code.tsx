@@ -223,10 +223,10 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
 
           <div className="panel-night space-y-3 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern} — {player.lit ? "lit" : "unlit"}</b> {player.lit ? "" : `(wakes at ${ROOMS[SHRINE_OF[player.lantern]].title})`}</span>
-              {player.hasKey && <span className="text-lantern">You carry the iron key</span>}
+              <span>Your lantern: <b className={player.lit ? "text-lantern" : ""}>{player.lantern}{player.lit ? " — lit" : ""}</b> {player.lit ? "" : `(wakes at ${ROOMS[SHRINE_OF[player.lantern]].title})`}</span>
             </div>
-            {player.delayed && <p className="text-sm text-shut">You are delayed: your next locked action will be cancelled.</p>}
+            {player.hasKey && <p className="text-lantern">You carry the iron key</p>}
+            {player.delayed && <p className="text-sm text-alert">You are delayed: your next locked action will be cancelled.</p>}
             <div className="grid gap-2 sm:grid-cols-2">
               {options.map((o) => (
                 <Button key={o.label} disabled={locked} variant={same(o.action) ? "default" : o.tone === "shut" ? "destructive" : "outline"}
@@ -273,7 +273,7 @@ function Roster({ state, me, isHost, send }: { state: GameState; me: string; isH
               <div className="text-xs">
                 <span className={p.lit ? "text-lantern" : "text-muted-foreground"}>{p.lantern} {p.lit ? "lit" : "unlit"}</span>
                 {p.hasKey && <span className="text-lantern"> · iron key</span>}
-                {p.delayed && <span className="text-shut"> · delayed</span>}
+                {p.delayed && <span className="text-alert"> · delayed</span>}
               </div>
             </div>
             {state.phase === "playing" && (

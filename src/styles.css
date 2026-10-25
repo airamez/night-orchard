@@ -36,6 +36,7 @@
   --color-lantern: var(--lantern);
   --color-hedge: var(--hedge);
   --color-shut: var(--shut);
+  --color-alert: var(--alert);
   --color-night-soft: var(--night-soft);
 }
 
@@ -54,6 +55,8 @@
   --hedge: oklch(0.48 0.065 158);
   /* #8d3d3d shut */
   --shut: oklch(0.45 0.11 22);
+  /* Brighter red for warning text on the dark night background */
+  --alert: oklch(0.78 0.15 25);
   --card: var(--night-soft);
   --card-foreground: var(--foreground);
   --popover: var(--night-soft);
