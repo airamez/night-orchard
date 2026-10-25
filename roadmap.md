@@ -5,3 +5,5 @@
 - [x] Verify the map dialog during a real game and on a narrow screen.
 - [x] Replace room circles with compact headers and occupant-sized player boxes.
 - [x] Verify empty and occupied room boxes in the guide and live full map.
+- [ ] Automatically share starting and newly discovered room tips in the Event log without repeats.
+- [ ] Verify shared tips in a real multiplayer round and update the guide.
