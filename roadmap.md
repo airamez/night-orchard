@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Add /dashboard with game, player, outcome, and God mode totals.
+- [ ] Persist restart-safe activity and approximate locations without IP addresses.
+- [ ] Verify tracking, dashboard, privacy rules, and record this exchange in the build log.
+
 - [x] Draw each game's gate password from a word list instead of the fixed "nightbloom".
 - [x] Fold in follow-up: password is x words chosen from the list per game.
 - [x] Expand to 100 themed words, 4 words per game, update guide and tests.
