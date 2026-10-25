@@ -58,6 +58,9 @@ The victory and defeat screens can also be previewed without playing:
 
 TanStack Start (React 19, Vite 7), Tailwind CSS v4, and Lovable Cloud for realtime room state. Game rules live in a pure, tested engine in `src/game/engine.ts`; server functions in `src/game/room.functions.ts` are the only writers, so browsers never resolve a round. Whole-room state is a single realtime row, and seat tokens are kept server-side only.
 
+The full technical picture — tech stack, data model, component and round diagrams, and how every browser stays in sync — is in [architecture.md](architecture.md).
+
+
 ```sh
 npm i
 npm run dev      # local dev server
