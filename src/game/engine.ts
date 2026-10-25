@@ -69,13 +69,14 @@ export function removePlayer(s: GameState, id: string): GameState {
   return next;
 }
 
-/** Start or restart: deal rooms and lanterns by join order, reset the world. */
+/** Share the room's authored information without revealing unexplored rooms. */
 function roomTip(r: number, roomId: RoomId, players: Player[]): GameState["log"][number] {
   const room = ROOMS[roomId];
   const names = players.filter((p) => p.room === roomId).map((p) => p.name).join(", ");
-  return { r, roomId, text: `${names} discovers ${room.title}: ${room.prose.join(" ")}` };
+  return { r, roomId, text: `${room.title} — discovered by ${names}: ${room.prose.join(" ")}` };
 }
 
+/** Start or restart: deal rooms and lanterns by join order, reset the world. */
 export function startGame(s: GameState): GameState {
   const players = s.players.map((p, i) => ({
     ...blankPlayer(p.id, p.name),
