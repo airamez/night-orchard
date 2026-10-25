@@ -101,7 +101,9 @@ export function gkRoom(s: GameState): RoomId { return GK_PATH[s.gkIndex % GK_PAT
 export function isLegal(s: GameState, p: Player, a: Action): boolean {
   const room = ROOMS[p.room];
   switch (a.type) {
-    case "wait": case "distract": return true;
+    case "wait": return true;
+    // Distract only matters the round the groundskeeper steps into your room.
+    case "distract": return GK_PATH[(s.gkIndex + 1) % GK_PATH.length] === p.room;
     case "move": {
       if (!a.dir || !room.exits[a.dir]) return false;
       if (room.lockedExit === a.dir && !s.doorUnlocked) return false;

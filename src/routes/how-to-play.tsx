@@ -192,7 +192,8 @@ function HowToPlay() {
         <p>
           If you end a round in the same room as him, you are <b>delayed</b>: your next locked action is
           cancelled. The only protection is a teammate in that room choosing <b>Distract</b> — they spend their
-          round so nobody there gets delayed.
+          round so nobody there gets delayed. The Distract button only appears when the groundskeeper is about
+          to walk into your room; in any other round it would do nothing, so it stays hidden.
         </p>
         <Example>
           <p>
