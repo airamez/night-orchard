@@ -1,0 +1,2 @@
+GRANT SELECT, DELETE ON public.game_feedback TO authenticated;
+CREATE POLICY "Owner can delete feedback" ON public.game_feedback FOR DELETE TO authenticated USING (lower(auth.jwt() ->> 'email') = 'airamez@gmail.com');
