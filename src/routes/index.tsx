@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createRoom } from "@/game/room.functions";
 import { saveSeat } from "@/game/useRoom";
+import { NAME_MAX } from "@/game/map";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,7 +50,8 @@ function Home() {
 
       <section className="panel-night space-y-4 p-6">
         <label className="block text-sm text-muted-foreground" htmlFor="name">Your name</label>
-        <Input id="name" value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Type your nickname here" />
+        <Input id="name" value={name} maxLength={NAME_MAX} onChange={(e) => setName(e.target.value)} placeholder="Type your nickname here" />
+        <p className="text-xs text-muted-foreground">Up to {NAME_MAX} characters, so your name always fits on the map.</p>
         <Button className="w-full lantern-glow" size="lg" disabled={busy} onClick={create}>Create room</Button>
       </section>
 

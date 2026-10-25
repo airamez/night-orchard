@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
-import { ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
+import { NAME_MAX, ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
 import { clearSeat, loadSeat, saveSeat, useRoom, type Seat } from "@/game/useRoom";
 
@@ -97,7 +97,8 @@ function JoinForm({ code, state, onJoined }: { code: string; state: GameState; o
         try { const r = await joinRoom({ data: { code, name: name.trim() } }); const s = { token: r.token, seatId: r.seatId }; await onJoined(s); }
         catch (err) { toast.error((err as Error).message); setBusy(false); }
       }}>
-        <Input value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoFocus />
+        <Input value={name} maxLength={NAME_MAX} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoFocus />
+        <p className="text-xs text-muted-foreground">Up to {NAME_MAX} characters, so your name always fits on the map.</p>
         <Button type="submit" disabled={busy}>Join the team</Button>
       </form>
     </Centered>
@@ -193,10 +194,14 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
       </header>
       <div className="grid gap-5 lg:grid-cols-2">
         <section className="space-y-4">
-          <article className="panel-parchment p-6">
-            <h2 className="font-serif text-3xl font-semibold">{room.title}</h2>
-            <p className="mt-3 font-serif text-lg leading-relaxed">{room.prose}</p>
-            <div className="mt-4 space-y-1 text-sm">
+          <article className="panel-parchment p-4">
+            <h2 className="font-serif text-2xl font-semibold">{room.title}</h2>
+            <ul className="mt-2 list-disc space-y-0.5 pl-5 font-serif text-base leading-snug">
+              {room.prose.map((line, i) => (
+                <li key={i} className={i > 0 && room.prose[i - 1]?.endsWith(":") ? "ml-4 list-[circle]" : undefined}>{line}</li>
+              ))}
+            </ul>
+            <div className="mt-3 space-y-1 text-xs">
               <p><b>Exits:</b> {Object.entries(room.exits).map(([d, to]) => `${DIR_LABEL[d as Dir]} — ${ROOMS[to!].title}${room.lockedExit === d && !state.doorUnlocked ? " (locked)" : ""}${room.hedge?.includes(d as Dir) ? " (woven shut)" : ""}`).join(" · ")}</p>
               <p><b>Items:</b> {state.keyRoom === player.room ? "the iron key" : "none"}</p>
               <p><b>Here with you:</b> {occupants.length ? occupants.map((p) => p.name).join(", ") : "no one"}{gkHere && " — and the groundskeeper"}</p>
