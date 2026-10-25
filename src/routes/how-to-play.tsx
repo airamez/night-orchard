@@ -124,7 +124,7 @@ function HowToPlay() {
           <li><b>Pick up / Drop the iron key</b> — the key opens one locked door. Only one player can carry it. If two players try to pick it up in the same round, the one who joined the room earlier gets it.</li>
           <li><b>Use the iron key</b> — unlocks the heavy east door of the Glass House. The key is used up.</li>
           <li><b>Light your lantern</b> — only works at your lantern's shrine. Your room text tells you which shrine wakes your lantern.</li>
-          <li><b>Speak</b> — at the Gate, say the password. It is two night-flower words, spoken in the order carved in the Orchard; getting it right once opens the way for the whole team, permanently.</li>
+          <li><b>Speak</b> — at the Gate, say the password. It is four night-flower words, spoken in the order carved in the Orchard; getting it right once opens the way for the whole team, permanently.</li>
           <li><b>Hold</b> — at the Sun Stone or the Rose Walk, holding keeps the woven hedge open for that round so others can pass through it.</li>
           <li><b>Distract the groundskeeper</b> — spend your round keeping him busy (see below).</li>
           <li><b>Wait</b> — do nothing. Sometimes the right move is no move.</li>

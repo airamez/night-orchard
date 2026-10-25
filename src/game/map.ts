@@ -59,16 +59,14 @@ export const NAME_MAX = 14;
 /** The gate password is drawn fresh from this list for every game start and restart.
  *  Keep every word lowercase, unique, and at most 8 letters so four words fit the Speak input. */
 export const PASSWORD_PHRASES = [
-  "nightbloom", "moonvine", "duskrose", "starlily", "shadowfern", "thornbriar", "hedgegate", "ivymoss",
-  "dewdrop", "fogmoth", "mistowl", "hazecrow", "ravenwren", "finchrobin", "beetlefly", "glowworm",
-  "snailslug", "wormant", "beewasp", "hornetweb", "cocoonlarva", "pollennectar", "petalstem", "leafroot",
-  "seedling", "sapling", "acorn", "pinecone", "willow", "cedar", "yewelm", "birchaspen",
-  "rowan", "holly", "laurel", "juniper", "poppy", "daisy", "tulip", "orchid",
-  "violet", "pansy", "lilac", "jasmine", "gardenia", "camellia", "bluebell", "foxglove",
-  "hemlock", "nettle", "thistle", "bramble", "clover", "trefoil", "meadow", "orchard",
-  "trellis", "arbor", "gazebo", "fountain", "statue", "obelisk", "lantern", "candle",
-  "ember", "ash", "smoke", "stone", "marble", "gravel", "pathway", "starfall",
-  "moonrise", "sundown", "twilight", "shadow", "silence", "whisper", "echo", "rustle",
-  "breeze", "gale", "frost", "rime", "damp", "clay", "sand", "pebble",
-  "grit", "loam", "terra", "flower", "blossom", "bud", "sprig", "frond",
+  "night", "bloom", "moon", "vine", "dusk", "rose", "star", "lily", "fern", "iris",
+  "thorn", "briar", "hedge", "maze", "gate", "wall", "ivy", "moss", "dew", "fog",
+  "mist", "haze", "moth", "owl", "bat", "fox", "toad", "newt", "crow", "raven",
+  "wren", "finch", "robin", "sparrow", "beetle", "firefly", "glowworm", "snail", "slug", "worm",
+  "ant", "bee", "wasp", "hornet", "spider", "web", "cocoon", "larva", "pollen", "nectar",
+  "petal", "stem", "leaf", "root", "seed", "sprout", "sapling", "acorn", "pinecone", "willow",
+  "cedar", "yew", "elm", "birch", "aspen", "rowan", "holly", "laurel", "juniper", "poppy",
+  "daisy", "tulip", "orchid", "violet", "pansy", "lilac", "jasmine", "gardenia", "camellia", "bluebell",
+  "foxglove", "hemlock", "nettle", "thistle", "bramble", "clover", "trefoil", "meadow", "orchard", "trellis",
+  "arbor", "gazebo", "fountain", "statue", "obelisk", "lantern", "candle", "ember", "ash", "smoke",
 ];

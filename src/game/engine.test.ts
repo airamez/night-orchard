@@ -108,22 +108,22 @@ describe("Night Orchard rules", () => {
 
   it("the password words must be spoken in the carved order", () => {
     let s = game(2);
-    s.password = "nightbloom moonvine";
+    s.password = "night moon rose dusk";
     s.players[0]!.room = "gate";
-    s = resolve(act(s, { p0: { type: "speak", text: "moonvine nightbloom" } }));
+    s = resolve(act(s, { p0: { type: "speak", text: "dusk rose moon night" } }));
     expect(s.passwordSolved).toBe(false);
-    s = resolve(act(s, { p0: { type: "speak", text: "nightbloom moonvine" } }));
+    s = resolve(act(s, { p0: { type: "speak", text: "night moon rose dusk" } }));
     expect(s.passwordSolved).toBe(true);
   });
 
   it("the orchard clue shows every password word in order", () => {
-    expect(passwordClue("nightbloom moonvine"))
-      .toBe("The night flowers are called NIGHTBLOOM and MOONVINE — speak them at the Gate, in this order.");
+    expect(passwordClue("night moon rose dusk"))
+      .toBe("The night flowers are called NIGHT, MOON, ROSE and DUSK — speak them at the Gate, in this order.");
   });
 
   it("the phrase list offers many unique lowercase words", () => {
-    expect(new Set(PASSWORD_PHRASES).size).toBeGreaterThan(5);
-    expect(PASSWORD_PHRASES.every((p) => /^[a-z]+$/.test(p))).toBe(true);
+    expect(new Set(PASSWORD_PHRASES).size).toBeGreaterThan(50);
+    expect(PASSWORD_PHRASES.every((p) => /^[a-z]{1,8}$/.test(p))).toBe(true);
   });
 
   it("earlier seat gets the key when two take it", () => {
