@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MazeMap } from "@/components/game/MazeMap";
+import { EndScreen } from "@/components/game/EndScreen";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
 import { joinRoom, roomAction, type RoomOp } from "@/game/room.functions";
