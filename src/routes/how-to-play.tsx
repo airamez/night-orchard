@@ -66,9 +66,9 @@ function HowToPlay() {
         <p>Use the team chat to read your room aloud and share what you find.</p>
         <Example>
           <p>
-            Mina stands in the Fountain Court and reads: <i>"The big key is under the bell."</i> She types it in
-            the chat. Theo, who started on the Bell Lawn, picks up the iron key — he never would have known it
-            mattered without her message.
+            Artur stands in the Fountain Court and reads: <i>"The big key is under the bell."</i> He types it in
+            the chat. Airamez, who started on the Bell Lawn, picks up the iron key — he never would have known it
+            mattered without his message.
           </p>
         </Example>
       </Section>
@@ -106,9 +106,9 @@ function HowToPlay() {
         </p>
         <Example>
           <p>
-            Ana is at the Hedge Knot and wants to go north to the Rose Walk. Bo is standing on the Sun Stone.
-            Both lock in: Bo chooses <b>Hold</b>, Ana chooses <b>North</b>. The hedge opens and Ana walks
-            through. If Bo had done anything else, the hedge would have stayed shut and Ana would have wasted
+            Jose is at the Hedge Knot and wants to go north to the Rose Walk. Leila is standing on the Sun Stone.
+            Both lock in: Leila chooses <b>Hold</b>, Jose chooses <b>North</b>. The hedge opens and Jose walks
+            through. If Leila had done anything else, the hedge would have stayed shut and Jose would have wasted
             the round.
           </p>
         </Example>
@@ -126,9 +126,9 @@ function HowToPlay() {
         </p>
         <Example>
           <p>
-            The groundskeeper is heading to the Fountain Court, where Mina needs to stay one more round. She
-            locks <b>Distract the groundskeeper</b>. He arrives, she keeps him talking, and nobody is delayed —
-            but she gave up her whole round to do it.
+            The groundskeeper is heading to the Fountain Court, where Artur needs to stay one more round. He
+            locks <b>Distract the groundskeeper</b>. The groundskeeper arrives, Artur keeps him talking, and
+            nobody is delayed — but he gave up his whole round to do it.
           </p>
         </Example>
       </Section>
