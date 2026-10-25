@@ -678,3 +678,9 @@ The quoted message still comes from the older published version; the fixes only 
 > Great, it worked, but I am wondering why something there is an action that is red and it is not the correct when god Mode.
 
 Explained that a red movement button warns that its route crosses the shut hedge; it is not God mode's recommended action. God mode selects the planned move separately, and the “Chosen” line shows what will be locked. Crossing the hedge requires another player to Hold at the Sun Stone or Rose Walk in the same round. No game behavior was changed.
+
+## Session: icons on the action options (2026-10-25)
+
+> Create and add icons to the action option: North, South, East, West = Arrows points Up, Down, Right and Left and create nice icons to the action type
+
+Every action button now leads with an icon: direction arrows (North = up, South = down, East = right, West = left) for movement, plus themed icons for the other action types — key for picking up the iron key, box-minus for dropping it, open door for using it on the door, hand for Hold, flame for lighting the lantern, hourglass for Wait, musical note for Distract, and speech mic for Speak at the gate. The same icons appear in the "Chosen" line and in each player row of the God mode plan, so planned moves are easy to match with the buttons. Added `src/components/game/ActionIcon.tsx`; browser-checked a two-player game (move, pickup/drop, wait all render) and all 40 game tests pass.
