@@ -1,3 +1,5 @@
 - [x] Add an Instructions button during gameplay that opens a separate tab.
 - [x] Show the full map in instructions and explain the fixed layout.
 - [x] Verify instructions open without replacing an active game.
+- [x] Enlarge maps and add a full-map dialog with live player positions.
+- [x] Verify the map dialog during a real game and on a narrow screen.
