@@ -115,9 +115,9 @@ function searchPlan(start: GameState): WinningPlan | "impossible" | null {
       let rest = c;
       for (let k = lists.length - 1; k >= 0; k--) { pick[k] = rest % lists[k]!.length; rest = Math.floor(rest / lists[k]!.length); }
       const actions = lists.map((l, k) => l[pick[k]!]!);
-      const trial = structuredClone(node.s);
-      trial.pending = Object.fromEntries(trial.players.map((p, k) => [p.id, { action: actions[k]!, locked: true }]));
-      const next = resolve(trial);
+      // resolve() clones its input, so the parent node is never mutated beyond pending.
+      node.s.pending = Object.fromEntries(node.s.players.map((p, k) => [p.id, { action: actions[k]!, locked: true }]));
+      const next = resolve(node.s);
       next.log = [];
       if (next.phase === "lost") continue;
       if (next.phase === "won") return { steps: buildSteps(nodes, i, actions), won: true, impossible: false };
@@ -129,6 +129,7 @@ function searchPlan(start: GameState): WinningPlan | "impossible" | null {
   }
   return "impossible";
 }
+
 
 function buildSteps(nodes: { s: GameState; parent: number; actions: Action[] }[], last: number, lastActions: Action[]): WinningStep[] {
   const chain: { s: GameState; actions: Action[] }[] = [{ s: nodes[last]!.s, actions: lastActions }];
