@@ -56,7 +56,7 @@ export const createRoom = createServerFn({ method: "POST" })
   });
 
 export const joinRoom = createServerFn({ method: "POST" })
-  .validator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(20) }).parse(d))
+  .validator((d) => z.object({ code: z.string().length(4), name: z.string().trim().min(1).max(NAME_MAX) }).parse(d))
   .handler(async ({ data }) => {
     const db = await admin();
     const code = data.code.toUpperCase();
