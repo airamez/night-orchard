@@ -1,5 +1,6 @@
 # Roadmap
 
+- [ ] Resume and complete the dashboard after the credit top-up (2026-10-25).
 - [ ] Add /dashboard with game, player, outcome, and God mode totals.
 - [ ] Persist restart-safe activity and approximate locations without IP addresses.
 - [ ] Verify tracking, dashboard, privacy rules, and record this exchange in the build log.
