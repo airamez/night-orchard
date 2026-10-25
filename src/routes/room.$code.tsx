@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MazeMap } from "@/components/game/MazeMap";
+import { MapView } from "@/components/game/MapView";
 import { EndScreen } from "@/components/game/EndScreen";
 import { gkRoom, isLegal, type Action, type GameState, type Player } from "@/game/engine";
 import { ROOMS, ROUND_LIMIT, SHRINE_OF, type Dir } from "@/game/map";
@@ -180,7 +180,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
   const same = (a: Action) => mine && mine.action.type === a.type && mine.action.dir === a.dir && (a.type !== "speak");
 
   return (
-    <main className="mx-auto max-w-[1100px] px-4 py-6">
+    <main className="mx-auto max-w-[1280px] px-4 py-6">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-2xl">Night Orchard</h1>
         <div className="flex flex-wrap items-center gap-3">
@@ -191,7 +191,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
           <Button size="sm" variant="ghost" className="text-muted-foreground" onClick={leave}>Leave game</Button>
         </div>
       </header>
-      <div className="grid gap-5 md:grid-cols-[1.25fr_1fr]">
+      <div className="grid gap-5 lg:grid-cols-2">
         <section className="space-y-4">
           <article className="panel-parchment p-6">
             <h2 className="font-serif text-3xl font-semibold">{room.title}</h2>
@@ -232,7 +232,7 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
         </section>
 
         <aside className="space-y-4">
-          <div className="panel-night p-3"><MazeMap state={state} me={me} /></div>
+          <div className="panel-night p-4"><MapView state={state} me={me} /></div>
           <Roster state={state} me={me} isHost={isHost} send={send} />
         </aside>
       </div>

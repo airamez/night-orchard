@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ROOMS, ROUND_LIMIT } from "@/game/map";
-import { MazeMap } from "@/components/game/MazeMap";
+import { MapView } from "@/components/game/MapView";
 
 export const Route = createFileRoute("/how-to-play")({
   head: () => ({
@@ -37,7 +37,7 @@ function Example({ children }: { children: React.ReactNode }) {
 
 function HowToPlay() {
   return (
-    <main className="mx-auto max-w-2xl space-y-6 px-5 py-12">
+    <main className="mx-auto max-w-3xl space-y-6 px-5 py-12">
       <header className="text-center">
         <p className="text-sm uppercase tracking-[0.3em] text-lantern">Instructions</p>
         <h1 className="mt-2 font-serif text-5xl font-semibold">How to play</h1>
@@ -84,8 +84,8 @@ function HowToPlay() {
           During play, your team’s map reveals rooms as anyone visits them. Connected rooms you have not
           visited yet appear as question marks. This example reveals the whole layout, but not the room clues.
         </p>
-        <figure className="mx-auto max-w-lg">
-          <MazeMap state={{ visited: Object.values(ROOMS).map((room) => room.id), players: [], doorUnlocked: false }} label="Full Night Orchard maze: all 13 rooms and their connections" />
+        <figure className="mx-auto w-full">
+          <MapView state={{ visited: Object.values(ROOMS).map((room) => room.id), players: [], doorUnlocked: false }} full />
           <figcaption className="mt-3 text-sm text-muted-foreground">
             Green lines are ordinary paths. The solid red path between Hedge Knot and Rose Walk needs a
             holder; the dashed red path between Glass House and the Orchard needs the iron key.
