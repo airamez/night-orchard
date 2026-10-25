@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addPlayer, newLobby, resolve, startGame, type Action, type GameState } from "./engine";
+import { addPlayer, newLobby, removePlayer, resolve, startGame, type Action, type GameState } from "./engine";
 
 function game(n = 2): GameState {
   let s = newLobby("p0", "P0");
@@ -57,5 +57,24 @@ describe("Night Orchard rules", () => {
     let s = game(2);
     for (let i = 0; i < 16; i++) s = resolve(act(s, {}));
     expect(s.phase).toBe("lost");
+  });
+
+  it("a removed player no longer blocks the round and the host role passes on", () => {
+    let s = game(3);
+    s = removePlayer(s, "p0");
+    expect(s.players.map((p) => p.id)).toEqual(["p1", "p2"]);
+    expect(s.hostId).toBe("p1");
+    s = act(s, { p1: { type: "wait" } });
+    s.pending["p2"] = { action: { type: "wait" }, locked: true };
+    s = resolve(s);
+    expect(s.round).toBe(2);
+  });
+
+  it("the game is won when the only players left inside are removed", () => {
+    let s = game(2);
+    s.players[0]!.room = "outer_lawn";
+    s.players[0]!.outAt = 1;
+    s = removePlayer(s, "p1");
+    expect(s.phase).toBe("won");
   });
 });
