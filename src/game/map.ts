@@ -22,7 +22,7 @@ export interface Room {
 export const PASSWORD_LINE = "The night flowers are carved here.";
 
 /** How many words each game's password draws from the phrase list. */
-export const PASSWORD_WORD_COUNT = 2;
+export const PASSWORD_WORD_COUNT = 4;
 
 /** The Orchard clue text for a game's password, e.g. "The night flowers are called NIGHTBLOOM and MOONVINE — speak them at the Gate, in this order." */
 export function passwordClue(password: string): string {
@@ -56,5 +56,19 @@ export const GK_PATH: RoomId[] = ["oak_shrine", "bell_lawn", "hedge_knot", "foun
 export const ROUND_LIMIT = 16;
 /** Max characters in a player name — kept short so names always fit inside map room boxes. */
 export const NAME_MAX = 14;
-/** The gate password is drawn fresh from this list for every game start and restart. */
-export const PASSWORD_PHRASES = ["nightbloom", "moonvine", "duskrose", "starlily", "shadowfern", "emberiris", "mistblossom", "midnightbell", "veilpetal", "gloamsnap"];
+/** The gate password is drawn fresh from this list for every game start and restart.
+ *  Keep every word lowercase, unique, and at most 8 letters so four words fit the Speak input. */
+export const PASSWORD_PHRASES = [
+  "nightbloom", "moonvine", "duskrose", "starlily", "shadowfern", "thornbriar", "hedgegate", "ivymoss",
+  "dewdrop", "fogmoth", "mistowl", "hazecrow", "ravenwren", "finchrobin", "beetlefly", "glowworm",
+  "snailslug", "wormant", "beewasp", "hornetweb", "cocoonlarva", "pollennectar", "petalstem", "leafroot",
+  "seedling", "sapling", "acorn", "pinecone", "willow", "cedar", "yewelm", "birchaspen",
+  "rowan", "holly", "laurel", "juniper", "poppy", "daisy", "tulip", "orchid",
+  "violet", "pansy", "lilac", "jasmine", "gardenia", "camellia", "bluebell", "foxglove",
+  "hemlock", "nettle", "thistle", "bramble", "clover", "trefoil", "meadow", "orchard",
+  "trellis", "arbor", "gazebo", "fountain", "statue", "obelisk", "lantern", "candle",
+  "ember", "ash", "smoke", "stone", "marble", "gravel", "pathway", "starfall",
+  "moonrise", "sundown", "twilight", "shadow", "silence", "whisper", "echo", "rustle",
+  "breeze", "gale", "frost", "rime", "damp", "clay", "sand", "pebble",
+  "grit", "loam", "terra", "flower", "blossom", "bud", "sprig", "frond",
+];
