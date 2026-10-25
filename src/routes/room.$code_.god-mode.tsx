@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LanternIcon } from "@/components/game/LanternIcon";
 import { ActionIcon } from "@/components/game/ActionIcon";
 import { loadSeat, useRoom } from "@/game/useRoom";
-import { trackRoomVisit } from "@/game/room.functions";
+import { trackVisit } from "@/game/trackVisit";
 import { ROOMS, ROUND_LIMIT } from "@/game/map";
 import { lockWarnings, winningAction, winningPlan } from "@/game/winningPlan";
 
@@ -25,7 +25,7 @@ function GodMode() {
   const { state, missing } = useRoom(code);
   useEffect(() => {
     const seat = loadSeat(code);
-    if (seat && state?.players.some((p) => p.id === seat.seatId)) void trackRoomVisit({ data: { code, token: seat.token, godMode: true } }).catch(() => {});
+    if (seat && state?.players.some((p) => p.id === seat.seatId)) void trackVisit({ code, token: seat.token, godMode: true }).catch(() => {});
   }, [code, state?.phase, state?.password]);
   const plan = useMemo(() => state ? winningPlan(state) : null, [state]);
   const warnings = useMemo(() => state && plan ? lockWarnings(state, plan) : [], [state, plan]);

@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { locationFromResponse, publicAddress } from "./activity";
+import { approximateLocationSchema, hasCapturedLocation, locationFromResponse, publicAddress } from "./activity";
 
 describe("location privacy", () => {
+  it("retries unknown captures and skips successful captures", () => {
+    expect(hasCapturedLocation({ country: null })).toBe(false);
+    expect(hasCapturedLocation({ country: "United States" })).toBe(true);
+  });
+  it("rejects IP fields in browser fallback submissions", () => {
+    expect(approximateLocationSchema.safeParse({ city: "Los Angeles", region: "California", country: "United States", ip: "8.8.8.8" }).success).toBe(false);
+  });
   it("keeps only city, state/region and country, never an IP", () => {
     expect(locationFromResponse({ success: true, city: "Los Angeles", region: "California", country: "United States", ip: "8.8.8.8", latitude: 34 })).toEqual({ city: "Los Angeles", region: "California", country: "United States" });
   });
