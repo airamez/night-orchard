@@ -214,8 +214,12 @@ function Game({ state, me, send, leave }: { state: GameState; me: string; send: 
             <h2 className="font-serif text-2xl font-semibold">{room.title}</h2>
             <ul className="mt-2 list-disc space-y-0.5 pl-5 font-serif text-base leading-snug">
               {room.prose.map((line, i) => (
-                <li key={i} className={i > 0 && room.prose[i - 1]?.endsWith(":") ? "ml-4 list-[circle]" : undefined}>{line}</li>
+                <li key={i} className={i > 0 && room.prose[i - 1]?.endsWith(":") ? "ml-4 list-[circle]" : undefined}>
+                  {room.shrine && line === `${room.shrine} lanterns wake here.` && <LanternIcon lantern={room.shrine} size={16} className="mr-1.5" />}
+                  {line}
+                </li>
               ))}
+
             </ul>
             <div className="mt-3 space-y-1 text-xs">
               <p><b>Exits:</b> {Object.entries(room.exits).map(([d, to]) => `${DIR_LABEL[d as Dir]} — ${ROOMS[to!].title}${room.lockedExit === d && !state.doorUnlocked ? " (locked)" : ""}${room.hedge?.includes(d as Dir) ? " (woven shut)" : ""}`).join(" · ")}</p>
