@@ -1,7 +1,8 @@
 # Routes
 
-How to play Night Orchard is in the [project README](../../README.md) and on the
-in-game `/how-to-play` page. This file is only for adding pages.
+How to play Night Orchard is the single file
+[public/how-to-play.html](../../public/how-to-play.html). The `/how-to-play`
+page shows that file. This file is only for adding pages.
 
 TanStack Start uses **file-based routing**. Every `.tsx` file in this directory
 defines a route. Do **not** create `src/pages/`, `src/routes/_app/index.tsx`, or
